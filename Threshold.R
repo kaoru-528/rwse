@@ -26,7 +26,7 @@ ThresholdForGroups = function(Ds,mode,ThresholdName)
 #Apply the soft or hard thresholding method of ThresholdName to a set of wavelet coefficients
 ThresholdForGroup = function(GroupWaveletCoefficients,mode,ThresholdName,lht_last)
 {
-    dataLength = length(GroupWaveletCoefficients[[1]]);
+    dataLength = length(GroupWaveletCoefficients[[1]])
     #print(ThresholdName)
     str_ThresholdName = ThresholdName
     #print(str_ThresholdName)
@@ -44,7 +44,7 @@ ThresholdForGroup = function(GroupWaveletCoefficients,mode,ThresholdName,lht_las
     }
     #print("step 1")
     #Preparing for threshold processing
-	  lists = list()
+	lists = list()
     lists = append(lists,list(GroupWaveletCoefficients[[1]]))
     i = 2
     groupLength = length(GroupWaveletCoefficients)
@@ -96,8 +96,10 @@ ThresholdForGroup = function(GroupWaveletCoefficients,mode,ThresholdName,lht_las
     return(lists)
 }
 
-
-#Get ut threshold
+# ---------------------------------
+# Get ut threshold
+# ut:Universal Threshold
+# ---------------------------------
 getUniversalThreshold = function(groupLength)
 {
 	#return 0;
@@ -107,7 +109,10 @@ getUniversalThreshold = function(groupLength)
 	c = b**0.5
 	return(c)
 }
-#Get ldt threshold
+# ---------------------------------
+# Get ldt threshold
+# ldt:Level-dependent-Threshold
+# ---------------------------------
 getLevelDependentThreshold = function(J,now_level,mean)
 {
 	a = 2 ** (-1 * 0.5 * (J - now_level + 2))
@@ -119,7 +124,19 @@ getLevelDependentThreshold = function(J,now_level,mean)
 	
 	return(t)
 }
-#Thresholding the wavelet coefficients of a layer at a threshold value of t
+# getLevelDependentThreshold = function(J,now_level,mean)
+# {
+# 	a = 2 ** (-1 * 0.5 * (J - now_level))
+# 	log2j = log(2 ** now_level)
+# 	b = log2j
+# 	c = log2j ** 2
+# 	d = 2 * mean * log2j * 2 ** now_level
+# 	t = a * (b + ((c + d) ** 0.5))	
+# 	return(t)
+# }
+
+
+# Thresholding the wavelet coefficients of a layer at a threshold value of t
 ThresholdForOneLevel = function(WaveletCoefficients,mode,t)
 {
 	coefficientsLength = length(WaveletCoefficients)
