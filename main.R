@@ -1,7 +1,7 @@
 # main.R
 
 # Loading data
-dataPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/DS1.txt")
+dataPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/DS/DS1.txt")
 # dsに変更
 ds1 = read.table(dataPath)[2]
 ds1 = as.numeric(ds1$V2)
