@@ -13,6 +13,11 @@ Threshold_Path = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/Thr
 print("Load Threshold Module")
 print(Threshold_Path)
 source(Threshold_Path)
+# Load Evaluation Module
+Evaluation_Path = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/EvaluationIndex.R")
+print("Load Evaluation Module")
+print(Evaluation_Path)
+source(Evaluation_Path)
 
 # Fisz Transformation of Hal Wavelet Estimation
 HFT = function(data,thresholdName="ut",thresholdMode="s",var=1)
@@ -252,23 +257,6 @@ H = function(data,thresholdName="ldt",thresholdMode="h")
   
   # Return Results
   return(idata)
-}
-
-MSE = function(oriData, estList)
-{
-  if(length(oriData)!= length(estList))
-  {
-    return(FALSE)
-  }
-  index = 1
-  total = 0
-  while(index <= length(oriData))
-  {
-    total = total + (oriData[[index]] - estList[[index]])**2
-    index = index + 1
-  }
-  total = sqrt(total)
-  return(total / length(oriData))
 }
 
 # 累積関数
