@@ -65,5 +65,7 @@ print(ds1)
 print("H")
 print(idata_h)
 
+write(idata_h, "./output/output.dat",sep = "\n")
+
 print("MSE")
 print(mse)
