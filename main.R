@@ -64,10 +64,6 @@ print(ds1)
 # print(idata_hat)
 print("H")
 print(idata_h)
-# .datで出力
 
 print("MSE")
 print(mse)
-
-
-# 小数点3桁でtxtに出力
