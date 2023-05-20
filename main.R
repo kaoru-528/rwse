@@ -1,5 +1,3 @@
-# main.R
-
 # Loading data
 dataPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/DS/DS1.txt")
 # dsに変更
