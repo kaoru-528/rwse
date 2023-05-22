@@ -46,12 +46,10 @@ source(WSE_Path)
 # idata_hbt = HBT(ds1,"none")
 
 # Calling Hal wavelet estimation without data transformation
-edata_h = H(ds1, "ldt", "h")
-df <- data.frame(Column1 = round(edata_h,digits = 3))
-write.table(df, "./output/h.dat")
-edata_h = H(ds1, "ldt", "s")
-df1 <- data.frame(Column1 = round(edata_h,digits = 3))
-write.table(df1, "./output/h.dat",append = TRUE)
+hard = round(H(ds1, "ldt", "h"), digits = 3)
+soft = round(H(ds1, "ldt", "s"),digits = 3)
+edata_h <- data.frame(hard, soft)
+write.table(edata_h, "./output/h.dat")
 
 # Calling MSE
 mse = MSE(ds1,idata_h)
