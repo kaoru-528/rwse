@@ -23,8 +23,8 @@ print(WSE_Path)
 source(WSE_Path)
 
 # Calculate the cumulative value of the data
-cul_ds1 = toCulData(ds1)
-print(cul_ds1)
+# cul_ds1 = toCulData(ds1)
+# print(cul_ds1)
 
 # Calling Hal wavelet estimation based on Anscombe data transformation
 # idata_hft = HFT(ds1,"ut","s")
@@ -46,24 +46,28 @@ print(cul_ds1)
 # idata_hbt = HBT(ds1,"none")
 
 # Calling Hal wavelet estimation without data transformation
-idata_h = H(ds1)
+edata_h = H(ds1, "ldt", "h")
+df <- data.frame(Column1 = round(edata_h,digits = 3))
+write.table(df, "./output/h.dat")
+edata_h = H(ds1, "ldt", "s")
+df1 <- data.frame(Column1 = round(edata_h,digits = 3))
+write.table(df1, "./output/h.dat",append = TRUE)
 
 # Calling MSE
 mse = MSE(ds1,idata_h)
 
 #Output estimation results
-print("ds1")
-print(ds1)
+# print("ds1")
+# print(ds1)
 # print("HFT")
 # print(idata_hft)
 # print("HBT")
 # print(idata_hbt)
 # print("HAT")
 # print(idata_hat)
-print("H")
-print(idata_h)
+# print("H")
+# print(edata_h)
 
-write(idata_h, "./output/output.dat",sep = "\n")
 
 print("MSE")
 print(mse)

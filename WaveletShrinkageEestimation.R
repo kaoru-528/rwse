@@ -206,7 +206,7 @@ HAT = function(data,thresholdName="ut",thresholdMode="s",var=1)
 
 
 # Hal wavelet estimation without data transformation
-H = function(data,thresholdName="ldt",thresholdMode="h")
+H = function(data,thresholdName,thresholdMode)
 {
   # Get data length
   dataLength = length(data)
