@@ -206,17 +206,20 @@ HAT = function(data,thresholdName="ut",thresholdMode="s",var=1)
 
 
 # Hal wavelet estimation without data transformation
-H = function(data,thresholdName,thresholdMode)
+H = function(data,thresholdName,thresholdMode, groupLength)
 {
   # Get data length
   dataLength = length(data)
   #print("dataLength")
   #print(dataLength)
   
-  # Get subdata length
-  groupLength = getGroupLength(dataLength)
-  #print("groupLength")
-  #print(groupLength)
+
+  if(groupLength >= getGroupLength(dataLength)){
+    # Get subdata length
+    groupLength = getGroupLength(dataLength)
+    #print("groupLength")
+    #print(groupLength)
+  }
   
   # Cut the original data into a number of sub-data of length 2^J
   groups = getGroups(data,groupLength)
