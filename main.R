@@ -1,8 +1,8 @@
 # Loading data
 dataPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/DS/DS1.txt")
 # dsに変更
-ds1 = read.table(dataPath)[2]
-ds1 = as.numeric(ds1$V2)
+ds = read.table(dataPath)[2]
+ds = as.numeric(ds$V2)
 
 # dataPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/DS2.txt")
 # ds2 = read.table(dataPath)[2]
@@ -46,13 +46,16 @@ source(WSE_Path)
 # idata_hbt = HBT(ds1,"none")
 
 # Calling Hal wavelet estimation without data transformation
-hard = round(H(ds1, "ldt", "h"), digits = 3)
-soft = round(H(ds1, "ldt", "s"),digits = 3)
-edata_h <- data.frame(hard, soft)
+if (file.exists("./output/h.dat") == FALSE) {
+    file.create("./output/h.dat")
+}
+hard = round(H(ds, "ldt", "h"), digits = 3)
+soft = round(H(ds, "ldt", "s"), digits = 3)
+edata_h = data.frame(hard, soft)
 write.table(edata_h, "./output/h.dat")
 
-# Calling MSE
-mse = MSE(ds1,idata_h)
+# Calculate MSE
+mse = MSE(ds,edata_h[,1])
 
 #Output estimation results
 # print("ds1")
