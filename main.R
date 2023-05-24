@@ -49,8 +49,8 @@ source(WSE_Path)
 if (file.exists("./output/h.dat") == FALSE) {
     file.create("./output/h.dat")
 }
-hard = round(H(ds, "ldt", "h"), digits = 3)
-soft = round(H(ds, "ldt", "s"), digits = 3)
+hard = round(H(ds, "ldt", "h", 16), digits = 3)
+soft = round(H(ds, "ldt", "s", 16), digits = 3)
 edata_h = data.frame(hard, soft)
 write.table(edata_h, "./output/h.dat")
 
