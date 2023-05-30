@@ -206,8 +206,9 @@ HAT = function(data,thresholdName="ut",thresholdMode="s",var=1)
 
 
 # Hal wavelet estimation without data transformation
-H = function(data,thresholdName,thresholdMode, groupLength)
+H = function(data,thresholdName,thresholdMode, index)
 {
+  groupLength = 2^index
   # Get data length
   dataLength = length(data)
   #print("dataLength")
