@@ -1,3 +1,7 @@
+# install packages "tidyverse"
+# install.packages("tidyverse")
+library(tidyverse)
+
 # Loading data
 dataPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/DS/DS1.txt")
 # dsに変更
@@ -46,16 +50,19 @@ source(WSE_Path)
 # idata_hbt = HBT(ds1,"none")
 
 # Calling Hal wavelet estimation without data transformation
-if (file.exists("./output/h.dat") == FALSE) {
-    file.create("./output/h.dat")
-}
+# create file name and path
+time = Sys.time() %>% format("%d-%H-%M-%S")
+file_name <- paste0("NDT_",time, ".dat")
+directory_path <- "./output/NDT-WSE/"
+file_path <- paste0(directory_path, file_name)
+
+file.create(file_path)
 hard = round(H(ds, "ldt", "h", 16), digits = 3)
 soft = round(H(ds, "ldt", "s", 16), digits = 3)
 edata_h = data.frame(hard, soft)
-write.table(edata_h, "./output/h.dat")
+write.table(edata_h, file_path)
 
-# Calculate MSE
-mse = MSE(ds,edata_h[,1])
+
 
 #Output estimation results
 # print("ds1")
@@ -69,6 +76,8 @@ mse = MSE(ds,edata_h[,1])
 # print("H")
 # print(edata_h)
 
-
-print("MSE")
-print(mse)
+# evaluation
+# Calculate MSE
+# mse = MSE(ds,edata_h[,1])
+# print("MSE")
+# print(mse)
