@@ -52,16 +52,20 @@ source(WSE_Path)
 # Calling Hal wavelet estimation without data transformation
 # create file name and path
 time = Sys.time() %>% format("%d-%H-%M-%S")
-file_name <- paste0("NDT_",time, ".dat")
-directory_path <- "./output/NDT-WSE/"
+file_name <- paste0(time, ".dat")
+directory_path <- "./output/NDT_WSE/"
 file_path <- paste0(directory_path, file_name)
 
 file.create(file_path)
-hard = round(H(ds, "ldt", "h", 16), digits = 3)
-soft = round(H(ds, "ldt", "s", 16), digits = 3)
+
+hard = round(H(ds, "ldt", "h", 5), digits = 3)
+soft = round(H(ds, "ldt", "s", 5), digits = 3)
 edata_h = data.frame(hard, soft)
 write.table(edata_h, file_path)
-
+hard = round(H(ds, "ldt", "h", 4), digits = 3)
+soft = round(H(ds, "ldt", "s", 4), digits = 3)
+edata_h = data.frame(edata_h, hard, soft)
+write.table(edata_h, file_path)
 
 
 #Output estimation results
