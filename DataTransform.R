@@ -102,9 +102,10 @@ inverseAnscombeTransform2FromGroup = function(AT_data,var)
 }
 
 
-# 
-# 
+# -----------------------------------------
+# (si^2)/4+sqrt(3/2)/(4*si)-11/(8*(si^2))+5*sqrt(3/2)/(8*(si^3))-1/8
 #The inverse Anscombe transformation 3 is applied to multiple data sets simultaneously, and the variance before transformation is var
+# -----------------------------------------
 inverseAnscombeTransform3FromGroups = function(AT_datas,var)
 {
         AT_datas = copy.deepcopy(AT_datas)
@@ -120,10 +121,7 @@ inverseAnscombeTransform3FromGroups = function(AT_datas,var)
 }
 
 
-# -----------------------------------------
-# (si^2)/4+sqrt(3/2)/(4*si)-11/(8*(si^2))+5*sqrt(3/2)/(8*(si^3))-1/8
 #Applying the inverse Anscombe transformation 3 to a dataset with a variance of var before transformation
-# -----------------------------------------
 inverseAnscombeTransform3FromGroup = function(AT_data,var)
 {
         groupsLength = length(AT_data)
@@ -212,6 +210,84 @@ inverseBartlettTransformFromGroup = function(BT_data,var)
     return(lists)
 }
 
+# -----------------------------------------------
+# bi=2*sqrt(yi)
+#Applying Bartlett transformation 2 to multiple data sets simultaneously, the variance after transformation is var
+# -----------------------------------------------
+BartlettTransform2FromGroups = function(groups,var)
+{
+        groupsLength = length(groups)
+        lists = list()
+        i = 1
+        while(i <= groupsLength)
+        {
+                lists = append(lists, list(BartlettTransform2FromGroup(groups[[i]],var)))
+                i = i + 1
+        }
+        return(lists)
+}
+
+
+# 
+# 
+#Applying a Bartlett transformation 2 to a data set with a variance of var after transformation
+BartlettTransform2FromGroup = function(group,var)
+{
+        lists = c()
+        groupLength = length(group)
+        i = 1
+        while(i <= groupLength)
+        {
+                a = group[[i]]
+                b = a**0.5
+                c = b * 2 * (var**0.5)
+                lists = append(lists, c)
+                i = i + 1
+        }
+        return(lists)
+}
+
+
+# -----------------------------------------------
+# (bi^2)/4
+#The inverse Bartlett transformation 2 is applied simultaneously to multiple data sets, and the variance before transformation is var
+# -----------------------------------------------
+inverseBartlettTransform2FromGroups = function(groups,var)
+{
+        groupsLength = length(groups)
+        lists = list()
+        i = 1
+        while(i <= groupsLength)
+        {
+                lists = append(lists, list(inverseBartlettTransform2FromGroup(groups[[i]],var)))
+                i = i + 1
+        }
+        return(lists)
+}
+
+
+#Applying an inverse Bartlett transformation 2 to a dataset with a pre-transformation variance of var
+inverseBartlettTransform2FromGroup = function(BT_data,var)
+{
+        groupsLength = length(BT_data)
+        i = 1
+        lists = c()
+        while(i <= groupsLength)
+        {
+                a = BT_data[[i]] * BT_data[[i]]
+                b = (2 * (var**0.5)) ** -2
+                c = b*a
+                c = round(c, 11)
+                lists = append(lists, c)
+                i = i + 1
+        }
+        return(lists)
+}
+
+
+# -----------------------------------------------
+# Fisz
+# -----------------------------------------------
 #Fisz transformation is applied to multiple data sets simultaneously and the variance after transformation is var
 FiszTransformFromGroups = function(scalingCoes,waveletCoes,var)
 {
