@@ -1,3 +1,6 @@
+# -----------------------------------------------
+# Anscombe
+# -----------------------------------------------
 #Anscombe transformation is applied to multiple data sets simultaneously and the variance after transformation is var
 AnscombeTransformFromGroups = function(groups,var)
 {
@@ -147,6 +150,9 @@ inverseAnscombeTransform3FromGroup = function(AT_data,var)
         return(lists)
 }
 
+# -----------------------------------------------
+# Bartlet
+# -----------------------------------------------
 #Applying Bartlett transformation to multiple data sets simultaneously, the variance after transformation is var
 BartlettTransformFromGroups = function(groups,var)
 {
@@ -228,8 +234,6 @@ BartlettTransform2FromGroups = function(groups,var)
 }
 
 
-# 
-# 
 #Applying a Bartlett transformation 2 to a data set with a variance of var after transformation
 BartlettTransform2FromGroup = function(group,var)
 {
@@ -446,4 +450,74 @@ Fisz_getD = function(c,f,var)
     res = f*(c**0.5)
     res = round(res, 11)
     return(res)
+}
+
+# -----------------------------------------------
+# Freeman
+# -----------------------------------------------
+#Applying Freeman transformation to multiple data sets simultaneously, the variance after transformation is var
+FreemanTransformFromGroups = function(groups,var)
+{
+        groupsLength = length(groups)
+        lists = list()
+        i = 1
+        while(i <= groupsLength)
+        {
+                lists = append(lists, list(FreemanTransformFromGroup(groups[[i]],var)))
+                i = i + 1
+        }
+        return(lists)
+}
+
+#Applying a Freeman transformation to a data set with a variance of var after transformation
+FreemanTransformFromGroup = function(group,var)
+{
+        lists = c()
+        groupLength = length(group)
+        i = 1
+        while(i <= groupLength)
+        {
+                a = group[[i]] + 1
+                b = a**0.5
+                d = group[[i]]
+                e = d**0.5
+                c = b * (var**0.5) + e * (var**0.5)
+                lists = append(lists, c)
+                i = i + 1
+        }
+        return(lists)
+}
+
+#The inverse Freeman transformation is applied simultaneously to multiple data sets, and the variance before transformation is var
+inverseFreemanTransformFromGroups = function(groups,var)
+{
+        groupsLength = length(groups)
+        lists = list()
+        i = 1
+        while(i <= groupsLength)
+        {
+                lists = append(lists, list(inverseFreemanTransformFromGroup(groups[[i]],var)))
+                i = i + 1
+        }
+        return(lists)
+}
+
+#Applying an inverse Freeman transformation to a dataset with a pre-transformation variance of var
+inverseFreemanTransformFromGroup = function(FT_data,var)
+{
+        groupsLength = length(FT_data)
+        i = 1
+        lists = c()
+        while(i <= groupsLength)
+        {
+                a = FT_data[[i]] * FT_data[[i]]
+                b = (2 * (var**0.5)) ** -2
+                d = a**(-1)
+                e = b**(-1)
+                c = b*a +e*d - 0.5
+                c = round(c, 11)
+                lists = append(lists, c)
+                i = i + 1
+        }
+        return(lists)
 }
