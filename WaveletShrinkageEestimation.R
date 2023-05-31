@@ -19,93 +19,31 @@ print("Load Evaluation Module")
 print(Evaluation_Path)
 source(Evaluation_Path)
 
-# Fisz Transformation of Hal Wavelet Estimation
-HFT = function(data,thresholdName="ut",thresholdMode="s",var=1)
+# Hal wavelet estimation without data transformation
+H = function(data,thresholdName,thresholdMode, index)
 {
+  groupLength = 2^index
   # Get data length
   dataLength = length(data)
   #print("dataLength")
   #print(dataLength)
   
-  # Get subdata length
-  groupLength = getGroupLength(dataLength)
-  #print("groupLength")
-  #print(groupLength)
-  
-  # Cut the original data into a number of sub-data of length 2^J
-  groups = getGroups(data,groupLength)
-  #print("groups[[1]]")
-  #print(groups[[1]])
-  
-  # Transform the sub-data into Gaussian data by Fisz transformation
-  Cs1  = getScalingCoefficientsFromGroups(groups)
-  Ds1  = getWaveletCoefficientsFromGroups(Cs1)
-  Fs1  = FiszTransformFromGroups(Cs1,Ds1,var)
-  f_groups = inverseHaarWaveletTransformForGroups(Cs1,Fs1)
-  #print(f_groups)
-  
-  # Calculate c
-  #print("Start calculating scale factor")
-  Cs2  = getScalingCoefficientsFromGroups(f_groups)
-  #Calculate d
-  #print("Start calculating wavelet coefficients")
-  Ds2  = getWaveletCoefficientsFromGroups(Cs2)
-  
-  # Noise reduction of wavelet coefficients using thresholdMode noise reduction rule, thresholdName threshold
-  #print("Start calculating the noise reduction wavelet coefficients")
-  Denoise_Ds2 = ThresholdForGroups(Ds2,thresholdMode,thresholdName)
-  # No noise reduction (for testing)
-  if(thresholdName == "none")
-  {
-    Denoise_Ds2 = Ds2
+
+  if(groupLength >= getGroupLength(dataLength)){
+    # Get subdata length
+    groupLength = getGroupLength(dataLength)
+    #print("groupLength")
+    #print(groupLength)
   }
-    
-  # Perform inverse Fisz data conversion
-  f_igroups = inverseHaarWaveletTransformForGroups(Cs2,Denoise_Ds2)
-  Cs3  = getScalingCoefficientsFromGroups(f_igroups)
-  Fs2  = getWaveletCoefficientsFromGroups(Cs3)
-  CDs  = inverseFiszTransformFromGroups(Cs3,Fs2,var)
-  Cs4 = CDs[[1]]
-  Ds3 = CDs[[2]]
-  
-  # Perform inverse wavelet conversion
-  #print("Start restoring data")
-  igroups = inverseHaarWaveletTransformForGroups(Cs4,Ds3)
-  
-  # Perform moving average
-  #print("Perform moving average")
-  idata= movingAverage(igroups,dataLength)
-
-  # Return Results
-  return(idata)
-}
-
-# Bartlett Transformation of Hal Wavelet Estimation
-HBT = function(data,thresholdName="ut",thresholdMode="s",var=1)
-{
-  # Get data length
-  dataLength = length(data)
-  #print("dataLength")
-  #print(dataLength)
-  
-  # Get subdata length
-  groupLength = getGroupLength(dataLength)
-  #print("groupLength")
-  #print(groupLength)
   
   # Cut the original data into a number of sub-data of length 2^J
   groups = getGroups(data,groupLength)
   #print("groups[[1]]")
   #print(groups[[1]])
   
-  #Convert sub-data into Gaussian data by Bartlett transformation
-  b_groups = BartlettTransformFromGroups(groups,var)
-  #print("Bartlett : groups[[1]]")
-  #print(groups[[1]])
-  
   # Calculate c
   #print("Start calculating scale factor")
-  Cs = getScalingCoefficientsFromGroups(b_groups)
+  Cs = getScalingCoefficientsFromGroups(groups)
   #print("Cs[[1]]")
   #print(Cs[[1]])
   
@@ -133,10 +71,7 @@ HBT = function(data,thresholdName="ut",thresholdMode="s",var=1)
   
   # Perform moving average
   #print("Perform moving average")
-  b_idata = movingAverage(i_groups,dataLength)
-  
-  # Perform inverse Bartlett data conversion
-  idata = inverseBartlettTransformFromGroup(b_idata,var);
+  idata = movingAverage(i_groups,dataLength)
   
   # Return Results
   return(idata)
@@ -204,32 +139,156 @@ HAT = function(data,thresholdName="ut",thresholdMode="s",var=1)
   return(idata)
 }
 
-
-# Hal wavelet estimation without data transformation
-H = function(data,thresholdName,thresholdMode, index)
+# Anscombe Transformation 2 of Hal Wavelet Estimation
+HA2T = function(data,thresholdName="ut",thresholdMode="s",var=1)
 {
-  groupLength = 2^index
+        # Get data length
+        dataLength = length(data)
+        #print("dataLength")
+        #print(dataLength)
+        
+        # Get subdata length
+        groupLength = getGroupLength(dataLength)
+        #print("groupLength")
+        #print(groupLength)
+        
+        # Cut the original data into a number of sub-data of length 2^J
+        groups = getGroups(data,groupLength)
+        #print("groups[[1]]")
+        #print(groups[[1]])
+        
+        #Transform sub-data to Gaussian data by Anscombe
+        a_groups = AnscombeTransformFromGroups(groups,var)
+        #print("Anscombe : groups[[1]]")
+        #print(groups[[1]])
+        
+        # Calculate c
+        #print("Start calculating scale factor")
+        Cs = getScalingCoefficientsFromGroups(a_groups)
+        #print("Cs[[1]]")
+        #print(Cs[[1]])
+        
+        #Calculate d
+        #print("Start calculating wavelet coefficients")
+        Ds = getWaveletCoefficientsFromGroups(Cs)
+        #print("Ds[[1]]")
+        #print(Ds[[1]])
+        
+        # Noise reduction of wavelet coefficients using thresholdMode noise reduction rule, thresholdName threshold
+        #print("Start calculating the noise reduction wavelet coefficients")
+        Denoise_Ds = ThresholdForGroups(Ds,thresholdMode,thresholdName)
+        
+        # No noise reduction (for testing)
+        if(thresholdName == "none")
+        {
+                Denoise_Ds = Ds
+        }
+        
+        # Perform inverse wavelet conversion
+        #print("Start restoring data")
+        i_groups = inverseHaarWaveletTransformForGroups(Cs,Denoise_Ds)
+        #print("i_groups[[1]]")
+        #print(i_groups[[1]])
+        
+        # Perform moving average
+        #print("Perform moving average")
+        a_idata = movingAverage(i_groups,dataLength)
+        
+        # Perform inverse Anscombe 2 data conversion
+        idata = inverseAnscombeTransform2FromGroup(a_idata,var);
+        
+        # Return Results
+        return(idata)
+}
+
+# Anscombe Transformation 3 of Hal Wavelet Estimation
+HA3T = function(data,thresholdName="ut",thresholdMode="s",var=1)
+{
+        # Get data length
+        dataLength = length(data)
+        #print("dataLength")
+        #print(dataLength)
+        
+        # Get subdata length
+        groupLength = getGroupLength(dataLength)
+        #print("groupLength")
+        #print(groupLength)
+        
+        # Cut the original data into a number of sub-data of length 2^J
+        groups = getGroups(data,groupLength)
+        #print("groups[[1]]")
+        #print(groups[[1]])
+        
+        #Transform sub-data to Gaussian data by Anscombe
+        a_groups = AnscombeTransformFromGroups(groups,var)
+        #print("Anscombe : groups[[1]]")
+        #print(groups[[1]])
+        
+        # Calculate c
+        #print("Start calculating scale factor")
+        Cs = getScalingCoefficientsFromGroups(a_groups)
+        #print("Cs[[1]]")
+        #print(Cs[[1]])
+        
+        #Calculate d
+        #print("Start calculating wavelet coefficients")
+        Ds = getWaveletCoefficientsFromGroups(Cs)
+        #print("Ds[[1]]")
+        #print(Ds[[1]])
+        
+        # Noise reduction of wavelet coefficients using thresholdMode noise reduction rule, thresholdName threshold
+        #print("Start calculating the noise reduction wavelet coefficients")
+        Denoise_Ds = ThresholdForGroups(Ds,thresholdMode,thresholdName)
+        
+        # No noise reduction (for testing)
+        if(thresholdName == "none")
+        {
+                Denoise_Ds = Ds
+        }
+        
+        # Perform inverse wavelet conversion
+        #print("Start restoring data")
+        i_groups = inverseHaarWaveletTransformForGroups(Cs,Denoise_Ds)
+        #print("i_groups[[1]]")
+        #print(i_groups[[1]])
+        
+        # Perform moving average
+        #print("Perform moving average")
+        a_idata = movingAverage(i_groups,dataLength)
+        
+        # Perform inverse Anscombe 3 data conversion
+        idata = inverseAnscombeTransform3FromGroup(a_idata,var);
+        
+        # Return Results
+        return(idata)
+}
+
+# Bartlett Transformation of Hal Wavelet Estimation
+HBT = function(data,thresholdName="ut",thresholdMode="s",var=1)
+{
   # Get data length
   dataLength = length(data)
   #print("dataLength")
   #print(dataLength)
   
-
-  if(groupLength >= getGroupLength(dataLength)){
-    # Get subdata length
-    groupLength = getGroupLength(dataLength)
-    #print("groupLength")
-    #print(groupLength)
-  }
+  # Get subdata length
+  groupLength = getGroupLength(dataLength)
+  #print("groupLength")
+  #print(groupLength)
   
   # Cut the original data into a number of sub-data of length 2^J
   groups = getGroups(data,groupLength)
   #print("groups[[1]]")
   #print(groups[[1]])
   
+  #Convert sub-data into Gaussian data by Bartlett transformation
+  b_groups = BartlettTransformFromGroups(groups,var)
+  #print("Bartlett : groups[[1]]")
+  #print(groups[[1]])
+  
   # Calculate c
   #print("Start calculating scale factor")
-  Cs = getScalingCoefficientsFromGroups(groups)
+  Cs = getScalingCoefficientsFromGroups(b_groups)
   #print("Cs[[1]]")
   #print(Cs[[1]])
   
@@ -257,10 +316,196 @@ H = function(data,thresholdName,thresholdMode, index)
   
   # Perform moving average
   #print("Perform moving average")
-  idata = movingAverage(i_groups,dataLength)
+  b_idata = movingAverage(i_groups,dataLength)
+  
+  # Perform inverse Bartlett data conversion
+  idata = inverseBartlettTransformFromGroup(b_idata,var);
   
   # Return Results
   return(idata)
+}
+# Freeman Transformation of Hal Wavelet Estimation
+HB2T = function(data,thresholdName="ut",thresholdMode="s",var=1)
+{
+        # Get data length
+        dataLength = length(data)
+        #print("dataLength")
+        #print(dataLength)
+        
+        # Get subdata length
+        groupLength = getGroupLength(dataLength)
+        #print("groupLength")
+        #print(groupLength)
+        
+        # Cut the original data into a number of sub-data of length 2^J
+        groups = getGroups(data,groupLength)
+        #print("groups[[1]]")
+        #print(groups[[1]])
+        
+        #Convert sub-data into Gaussian data by Bartlett transformation 2
+        b2_groups = BartlettTransform2FromGroups(groups,var)
+        #print("Bartlett2 : groups[[1]]")
+        #print(groups[[1]])
+        
+        # Calculate c
+        #print("Start calculating scale factor")
+        Cs = getScalingCoefficientsFromGroups(b2_groups)
+        #print("Cs[[1]]")
+        #print(Cs[[1]])
+        
+        #Calculate d
+        #print("Start calculating wavelet coefficients")
+        Ds = getWaveletCoefficientsFromGroups(Cs)
+        #print("Ds[[1]]")
+        #print(Ds[[1]])
+        
+        # Noise reduction of wavelet coefficients using thresholdMode noise reduction rule, thresholdName threshold
+        #print("Start calculating the noise reduction wavelet coefficients")
+        Denoise_Ds = ThresholdForGroups(Ds,thresholdMode,thresholdName)
+        
+        # No noise reduction (for testing)
+        if(thresholdName == "none")
+        {
+                Denoise_Ds = Ds
+        }
+        
+        # Perform inverse wavelet conversion
+        #print("Start restoring data")
+        i_groups = inverseHaarWaveletTransformForGroups(Cs,Denoise_Ds)
+        #print("i_groups[[1]]")
+        #print(i_groups[[1]])
+        
+        # Perform moving average
+        #print("Perform moving average")
+        b2_idata = movingAverage(i_groups,dataLength)
+        
+        # Perform inverse Bartlett 2 data conversion
+        idata = inverseBartlettTransform2FromGroup(b2_idata,var);
+        
+        # Return Results
+        return(idata)
+}
+
+# Fisz Transformation of Hal Wavelet Estimation
+HFT = function(data,thresholdName="ut",thresholdMode="s",var=1)
+{
+  # Get data length
+  dataLength = length(data)
+  #print("dataLength")
+  #print(dataLength)
+  
+  # Get subdata length
+  groupLength = getGroupLength(dataLength)
+  #print("groupLength")
+  #print(groupLength)
+  
+  # Cut the original data into a number of sub-data of length 2^J
+  groups = getGroups(data,groupLength)
+  #print("groups[[1]]")
+  #print(groups[[1]])
+  
+  # Transform the sub-data into Gaussian data by Fisz transformation
+  Cs1  = getScalingCoefficientsFromGroups(groups)
+  Ds1  = getWaveletCoefficientsFromGroups(Cs1)
+  Fs1  = FiszTransformFromGroups(Cs1,Ds1,var)
+  f_groups = inverseHaarWaveletTransformForGroups(Cs1,Fs1)
+  #print(f_groups)
+  
+  # Calculate c
+  #print("Start calculating scale factor")
+  Cs2  = getScalingCoefficientsFromGroups(f_groups)
+  #Calculate d
+  #print("Start calculating wavelet coefficients")
+  Ds2  = getWaveletCoefficientsFromGroups(Cs2)
+  
+  # Noise reduction of wavelet coefficients using thresholdMode noise reduction rule, thresholdName threshold
+  #print("Start calculating the noise reduction wavelet coefficients")
+  Denoise_Ds2 = ThresholdForGroups(Ds2,thresholdMode,thresholdName)
+  # No noise reduction (for testing)
+  if(thresholdName == "none")
+  {
+    Denoise_Ds2 = Ds2
+  }
+    
+  # Perform inverse Fisz data conversion
+  f_igroups = inverseHaarWaveletTransformForGroups(Cs2,Denoise_Ds2)
+  Cs3  = getScalingCoefficientsFromGroups(f_igroups)
+  Fs2  = getWaveletCoefficientsFromGroups(Cs3)
+  CDs  = inverseFiszTransformFromGroups(Cs3,Fs2,var)
+  Cs4 = CDs[[1]]
+  Ds3 = CDs[[2]]
+  
+  # Perform inverse wavelet conversion
+  #print("Start restoring data")
+  igroups = inverseHaarWaveletTransformForGroups(Cs4,Ds3)
+  
+  # Perform moving average
+  #print("Perform moving average")
+  idata= movingAverage(igroups,dataLength)
+
+  # Return Results
+  return(idata)
+}
+# Freeman Transformation of Hal Wavelet Estimation
+HF2T = function(data,thresholdName="ut",thresholdMode="s",var=1)
+{
+        # Get data length
+        dataLength = length(data)
+        #print("dataLength")
+        #print(dataLength)
+        
+        # Get subdata length
+        groupLength = getGroupLength(dataLength)
+        #print("groupLength")
+        #print(groupLength)
+        
+        # Cut the original data into a number of sub-data of length 2^J
+        groups = getGroups(data,groupLength)
+        #print("groups[[1]]")
+        #print(groups[[1]])
+        
+        #Convert sub-data into Gaussian data by Freeman transformation
+        f_groups = FreemanTransformFromGroups(groups,var)
+        #print("Freeman : groups[[1]]")
+        #print(groups[[1]])
+        
+        # Calculate c
+        #print("Start calculating scale factor")
+        Cs = getScalingCoefficientsFromGroups(f_groups)
+        #print("Cs[[1]]")
+        #print(Cs[[1]])
+        
+        #Calculate d
+        #print("Start calculating wavelet coefficients")
+        Ds = getWaveletCoefficientsFromGroups(Cs)
+        #print("Ds[[1]]")
+        #print(Ds[[1]])
+        
+        # Noise reduction of wavelet coefficients using thresholdMode noise reduction rule, thresholdName threshold
+        #print("Start calculating the noise reduction wavelet coefficients")
+        Denoise_Ds = ThresholdForGroups(Ds,thresholdMode,thresholdName)
+        
+        # No noise reduction (for testing)
+        if(thresholdName == "none")
+        {
+                Denoise_Ds = Ds
+        }
+        
+        # Perform inverse wavelet conversion
+        #print("Start restoring data")
+        i_groups = inverseHaarWaveletTransformForGroups(Cs,Denoise_Ds)
+        #print("i_groups[[1]]")
+        #print(i_groups[[1]])
+        
+        # Perform moving average
+        #print("Perform moving average")
+        f_idata = movingAverage(i_groups,dataLength)
+        
+        # Perform inverse Freeman data conversion
+        idata = inverseFreemanTransformFromGroup(f_idata,var);
+        
+        # Return Results
+        return(idata)
 }
 
 # 累積関数
@@ -278,5 +523,3 @@ toCulData = function(data)
   }
   return(culData)
 }
-
-
