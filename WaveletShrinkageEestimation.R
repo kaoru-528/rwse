@@ -74,7 +74,7 @@ H = function(data,thresholdName,thresholdMode, index)
   idata = movingAverage(i_groups,dataLength)
   
   # Return Results
-  return(idata)
+  return(list(idata, Cs, Ds))
 }
 
 # Anscombe Transformation of Hal Wavelet Estimation

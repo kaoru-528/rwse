@@ -63,30 +63,6 @@ getScalingCoefficientsFromGroup = function(timeList)
   return(lists)
 }
 
-# 1/2 times
-# #Scale coefficients of discrete Hal wavelets expanded for a set of data
-# getScalingCoefficientsFromGroup = function(timeList) 
-# {
-#   lists = list()
-#   J = getHighestResolutionLevel( length(timeList) )
-#   lists = append(lists, list(timeList))
-#   j = 1
-#   while(j <= J)
-#   {
-#     tempList = c()
-#     k = 1
-#     while(k <= 2**(J - j))
-#     {
-#       coe = 0.5*( lists[[j]][2 * k - 1] + lists[[j]][2 * k])
-#       tempList = append(tempList,coe)
-#       k = k + 1
-#     }
-#     lists = append(lists, list(tempList))
-#     j = j + 1
-#   }
-#   return(lists)
-# }
-
 # 1/sqrt(2)times
 #Wavelet coefficients of discrete Hal wavelets are simultaneously expanded for multiple data sets
 getWaveletCoefficientsFromGroup = function(coeList)
@@ -111,30 +87,6 @@ getWaveletCoefficientsFromGroup = function(coeList)
   return(lists)
 }
 
-# 1/2 times
-# Wavelet coefficients of discrete Hal wavelets are simultaneously expanded for multiple data sets
-# getWaveletCoefficientsFromGroup = function(coeList)
-# {
-#   lists = list()
-#   J = getHighestResolutionLevel( length(coeList[[1]]) )
-#   lists = append(lists, list(coeList[[1]]))
-#   j = 1
-#   while(j <= J)
-#   {
-#     tempList = c()
-#     k = 1
-#     while(k <= 2**(J - j))
-#     {
-#       c = 0.5*( coeList[[j]][2 * k - 1] - coeList[[j]][2 * k] )
-#       tempList = append(tempList,c)
-#       k = k + 1
-#     }
-#     lists = append(lists,list(tempList))
-#     j = j + 1
-#   }
-#   return(lists)
-# }
-
 #Scale coefficients of the discrete Hal wavelet are simultaneously expanded for multiple data sets
 getScalingCoefficientsFromGroups = function(Groups)
 {
@@ -147,6 +99,9 @@ getScalingCoefficientsFromGroups = function(Groups)
     lists = append(lists,list(tempList))
     i = i + 1
   }
+  t(lists)
+  write.csv(lists[[1]], "./output/NDT_WSE/est.csv")
+  print(lists[[1]])
   return(lists)
 }
 
@@ -192,35 +147,6 @@ inverseHaarWaveletTransformForGroup = function(scalingCoe,waveletCoe)
   }
   return(scalingCoe[[1]])
 }
-
-# 1/2 times
-#Convert a set of Haar wavelet coefficients with Haar scale coefficients to the original data
-# inverseHaarWaveletTransformForGroup = function(scalingCoe,waveletCoe)
-# {
-#   groupLength = length(scalingCoe)
-#   if (groupLength != length(waveletCoe))
-#   {
-#     return(FALSE)
-#   }
-#   J = groupLength
-#   k = 0
-#   j = groupLength
-#   #print("inverseHaarWaveletTransformForGroup")
-#   #print(scalingCoe[j])
-#   while(j > 1)
-#   {
-#     k = 1
-#     while(k <= 2**(J - j))
-#     {
-#       scalingCoe[[j - 1]][2 * k - 1] = scalingCoe[[j]][k] + waveletCoe[[j]][k]
-#       scalingCoe[[j - 1]][2 * k] = scalingCoe[[j]][k] - waveletCoe[[j]][k]
-#       k = k + 1
-#     }
-#     j = j - 1
-#   }
-#   return(scalingCoe[[1]])
-# }
-
 
 #Convert multiple sets of Haar wavelet coefficients with Haar scale coefficients to the original data
 inverseHaarWaveletTransformForGroups = function(scalingCoes,waveletCoes)
