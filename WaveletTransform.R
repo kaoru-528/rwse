@@ -99,9 +99,8 @@ getScalingCoefficientsFromGroups = function(Groups)
     lists = append(lists,list(tempList))
     i = i + 1
   }
-  t(lists)
-  write.csv(lists[[1]], "./output/NDT_WSE/est.csv")
-  print(lists[[1]])
+  df <- as.data.frame(t(sapply(lists, unlist)))
+  write.csv(df, "./output/NDT_WSE/est.csv", row.names = FALSE)
   return(lists)
 }
 

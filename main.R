@@ -85,7 +85,7 @@ source(WT_Path)
 
 # c <- proc.time()
 
-soft = H(ds, "ldt", "h", i)
+soft = H(ds, "ldt", "h", 3)
 
 
 #Output estimation results
