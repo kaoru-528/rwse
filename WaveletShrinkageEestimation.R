@@ -44,14 +44,19 @@ H = function(data,thresholdName,thresholdMode, index)
   # Calculate c
   #print("Start calculating scale factor")
   Cs = getScalingCoefficientsFromGroups(groups)
-  #print("Cs[[1]]")
-  #print(Cs[[1]])
+  df = as.data.frame(t(sapply(Cs, unlist)))
+  write.csv(df, "./output/NDT_WSE/ScallingCoefficients.csv", row.names = FALSE)
+  # print("Cs[[1]]")
+  # print(Cs[[1]])
   
   #Calculate d
   #print("Start calculating wavelet coefficients")
   Ds = getWaveletCoefficientsFromGroups(Cs)
-  #print("Ds[[1]]")
-  #print(Ds[[1]])
+  dw = data.frame()
+  dw = append(dw, as.data.frame(t(sapply(Ds, unlist))))
+  write.csv(dw, "./output/NDT_WSE/WaveletCoefficients.csv", row.names = FALSE)
+  # print("Ds[[1]]")
+  # print(Ds[[1]])
   
   # Noise reduction of wavelet coefficients using thresholdMode noise reduction rule, thresholdName threshold
   #print("Start calculating the noise reduction wavelet coefficients")
@@ -62,6 +67,8 @@ H = function(data,thresholdName,thresholdMode, index)
   {
     Denoise_Ds = Ds
   }
+  dn = as.data.frame(t(sapply(Denoise_Ds, unlist)))
+  write.csv(dn, "./output/NDT_WSE/Dnoise_Ds.csv", row.names = FALSE)
   
   # Perform inverse wavelet conversion
   #print("Start restoring data")
@@ -74,7 +81,7 @@ H = function(data,thresholdName,thresholdMode, index)
   idata = movingAverage(i_groups,dataLength)
   
   # Return Results
-  return(list(idata, Cs, Ds))
+  return(idata)
 }
 
 # Anscombe Transformation of Hal Wavelet Estimation

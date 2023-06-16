@@ -2,7 +2,7 @@
 # install.packages("tidyverse")
 library(tidyverse)
 
-# Loading data
+# Loading datainstall.packages("writexl")
 dataPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/DS/DS1.txt")
 # dsに変更
 ds = read.table(dataPath)[2]
@@ -56,36 +56,23 @@ source(WT_Path)
 
 # Calling Hal wavelet estimation without data transformation
 # create file name and path
-# time = Sys.time() %>% format("%d-%H-%M-%S")
-# file_name = paste0(time, ".dat")
-# directory_path = "./output/NDT_WSE/"
-# file_path = paste0(directory_path, file_name)
+time = Sys.time() %>% format("%H-%M-%S")
+file_name = paste0(time, ".csv")
+directory_path = "./output/NDT_WSE/"
+file_path = paste0(directory_path, file_name)
 
-# file.create(file_path)
-
-# for(i in 2:log(getGroupLength(length(ds)), base = 2)){
-    
-#     hard = round(H(ds, "ldt", "h", i), digits = 3)
-#     soft = round(H(ds, "ldt", "s", i), digits = 3)
-#     if(i == 2){
-#         J = sprintf("J = %d", i)
-#         new_data <- c(J,J)
-#         edata_h = data.frame(hard, soft)
-#         edata_h <- rbind(new_data,edata_h)
-#     }
-#     else{
-#         J = sprintf("J = %d", i)
-#         new_data <- c(J,J)
-#         edata_h_s = data.frame(hard, soft)
-#         edata_h_s <- rbind(new_data,edata_h_s)
-#         edata_h = data.frame(edata_h, edata_h_s)
-#     }
-#     write.table(edata_h, file_path)
-# }
+file.create(file_path)
+edata_h = list()
+for(i in 2:log(getGroupLength(length(ds)), base = 2)){
+    edata_h_s = list(hard = round(H(ds, "ldt", "h", i), digits = 3), soft = round(H(ds, "ldt", "s", i), digits = 3))
+    edata_h = append(edata_h, edata_h_s)
+}
+write.csv(edata_h, file_path, row.names = FALSE)
 
 # c <- proc.time()
 
-soft = H(ds, "ldt", "h", 3)
+# soft = H(ds, "ldt", "s", 3)
+# print(soft)
 
 
 #Output estimation results

@@ -53,7 +53,7 @@ getScalingCoefficientsFromGroup = function(timeList)
     k = 1
     while(k <= 2**(J - j))
     {
-      coe = (1/sqrt(2))*( lists[[j]][2 * k - 1] + lists[[j]][2 * k])
+      coe = (1/sqrt(2))*(lists[[j]][2 * k - 1] + lists[[j]][2 * k])
       tempList = append(tempList,coe)
       k = k + 1
     }
@@ -68,7 +68,7 @@ getScalingCoefficientsFromGroup = function(timeList)
 getWaveletCoefficientsFromGroup = function(coeList)
 {
   lists = list()
-  J = getHighestResolutionLevel( length(coeList[[1]]) )
+  J = getHighestResolutionLevel(length(coeList[[1]]) )
   lists = append(lists, list(coeList[[1]]))
   j = 1
   while(j <= J)
@@ -77,7 +77,7 @@ getWaveletCoefficientsFromGroup = function(coeList)
     k = 1
     while(k <= 2**(J - j))
     {
-      c = (1/sqrt(2))*( coeList[[j]][2 * k - 1] - coeList[[j]][2 * k] )
+      c = (1/sqrt(2))*( coeList[[j]][2 * k - 1] - coeList[[j]][2 * k])
       tempList = append(tempList,c)
       k = k + 1
     }
@@ -99,8 +99,6 @@ getScalingCoefficientsFromGroups = function(Groups)
     lists = append(lists,list(tempList))
     i = i + 1
   }
-  df <- as.data.frame(t(sapply(lists, unlist)))
-  write.csv(df, "./output/NDT_WSE/est.csv", row.names = FALSE)
   return(lists)
 }
 
