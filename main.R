@@ -46,54 +46,31 @@ source(WT_Path)
 # mseRes = MSE(cul_idata_hft,cul_ds1)
 # print(round(mseRes,3))
 
-
-# Calling Hal wavelet estimation based on Fisz data transformation
-# idata_hft = HFT(ds1,"ut")
-# Calling Hal wavelet estimation based on Anscombe data transformation
-# idata_hat = HAT(ds1,"none")
-# Calling the Bartlett data transformation based Hal wavelet estimation
-# idata_hbt = HBT(ds1,"none")
-
-# Calling Hal wavelet estimation without data transformation
-# create file name and path
-# time = Sys.time() %>% format("%H-%M-%S")
-# file_name = paste0(time, ".csv")
-# directory_path = "./output/NDT_WSE/"
-# file_path = paste0(directory_path, file_name)
-
-time = Sys.time() %>% format("%H-%M-%S")
-dw_s = data.frame()
-for(i in 2:log(getGroupLength(length(ds)), base = 2)){
-    hard = H(ds, "ldt", "h", i)
-    soft = H(ds, "ldt", "s", i)
-    hard_coe= rbind(hard$Cs,hard$Ds,hard$Denoise_Ds)
-    soft_coe= rbind(soft$Cs,soft$Ds,soft$Denoise_Ds)
-    rbind(hard_coe,soft_coe)
-    file_name_edata = paste0(time,"_edata_J=",i  ,".csv")
-    file_name_coe = paste0(time,"_coeJ=",i  ,".csv")
-    directory_path = "./output/NDT_WSE/"
-    file_path = paste0(directory_path, file_name_edata)
-    edata_h_s = list(hard = round(hard$idata, digits = 3), soft = round(soft$idata, digits = 3))
-    write.csv(edata_h_s, file_path, row.names = FALSE)
-}
-# write.csv(edata_h, file_path, row.names = FALSE)
-# write.csv(dw_s, "./output/NDT_WSE/WaveletCoefficients.csv", row.names = FALSE)
-
-# soft = H(ds, "ldt", "s", 3)
-# print(soft$Ds)
-
-
 #Output estimation results
-# print("ds1")
-# print(ds1)
-# print("HFT")
-# print(idata_hft)
-# print("HBT")
-# print(idata_hbt)
-# print("HAT")
-# print(idata_hat)
-# print("H")
-# print(edata_h)
+# H
+# Calling Hal wavelet estimation without data transformation
+# time = Sys.time() %>% format("%H-%M-%S")
+# for(i in 2:log(getGroupLength(length(ds)), base = 2)){
+#     hard = H(ds, "ldt", "h", i)
+#     soft = H(ds, "ldt", "s", i)
+#     hard_coe= rbind("Cs",as.data.frame(t(sapply(hard$Cs, unlist))),"Ds",as.data.frame(t(sapply(hard$Ds, unlist))),"Denoise_Ds",as.data.frame(t(sapply(hard$Denoise_Ds, unlist))))
+#     soft_coe= rbind("Cs",as.data.frame(t(sapply(soft$Cs, unlist))),"Ds",as.data.frame(t(sapply(soft$Ds, unlist))),"Denoise_Ds",as.data.frame(t(sapply(soft$Denoise_Ds, unlist))))
+#     coe = rbind("hard",hard_coe,"soft",soft_coe)
+#     file_name_edata = paste0(time,"_edata_J=",i  ,".csv")
+#     file_name_coe = paste0(time,"_coeJ=",i  ,".csv")
+#     directory_path = "./output/NDT_WSE/"
+#     file_path_edata = paste0(directory_path, file_name_edata)
+#     file_path_coe = paste0(directory_path, file_name_coe)
+#     edata_h_s = list(hard = round(hard$idata, digits = 3), soft = round(soft$idata, digits = 3))
+#     write.csv(edata_h_s, file_path_edata, row.names = FALSE)
+#     write.csv(coe, file_path_coe, row.names = FALSE)
+# }
+
+# HAT
+# Calling Hal wavelet estimation without data transformation
+time = Sys.time() %>% format("%H-%M-%S")
+
+
 
 # evaluation
 # Calculate MSE
