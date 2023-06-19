@@ -44,16 +44,16 @@ H = function(data,thresholdName,thresholdMode, index)
   # Calculate c
   #print("Start calculating scale factor")
   Cs = getScalingCoefficientsFromGroups(groups)
-  df = as.data.frame(t(sapply(Cs, unlist)))
-  write.csv(round(df,digits = 3), "./output/NDT_WSE/ScallingCoefficients.csv", row.names = FALSE)
+  # df = as.data.frame(t(sapply(Cs, unlist)))
+  # write.csv(round(df,digits = 3), "./output/NDT_WSE/ScallingCoefficients.csv", row.names = FALSE)
   # print("Cs[[1]]")
   # print(Cs[[1]])
   
   #Calculate d
   #print("Start calculating wavelet coefficients")
   Ds = getWaveletCoefficientsFromGroups(Cs)
-  dw = as.data.frame(t(sapply(Ds, unlist)))
-  write.csv(round(dw, digits = 3), "./output/NDT_WSE/WaveletCoefficients.csv", row.names = FALSE)
+  # dw = as.data.frame(t(sapply(Ds, unlist)))
+  # write.csv(round(dw, digits = 3), "./output/NDT_WSE/WaveletCoefficients.csv", row.names = FALSE)
   # print("Ds[[1]]")
   # print(Ds[[1]])
   
@@ -66,8 +66,8 @@ H = function(data,thresholdName,thresholdMode, index)
   {
     Denoise_Ds = Ds
   }
-  dn = as.data.frame(t(sapply(Denoise_Ds, unlist)))
-  write.csv(round(dn,digits = 3), "./output/NDT_WSE/Dnoise_Ds.csv", row.names = FALSE)
+  # dn = as.data.frame(t(sapply(Denoise_Ds, unlist)))
+  # write.csv(round(dn,digits = 3), "./output/NDT_WSE/Dnoise_Ds.csv", row.names = FALSE)
   
   # Perform inverse wavelet conversion
   #print("Start restoring data")
@@ -78,6 +78,7 @@ H = function(data,thresholdName,thresholdMode, index)
   # Perform moving average
   #print("Perform moving average")
   idata = movingAverage(i_groups,dataLength)
+  idata = list(idata=idata, Cs=Cs,Ds=Ds, Denoise_Ds=Denoise_Ds)
   
   # Return Results
   return(idata)
