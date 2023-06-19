@@ -61,18 +61,20 @@ file_name = paste0(time, ".csv")
 directory_path = "./output/NDT_WSE/"
 file_path = paste0(directory_path, file_name)
 
-file.create(file_path)
 edata_h = list()
 for(i in 2:log(getGroupLength(length(ds)), base = 2)){
-    edata_h_s = list(hard = round(H(ds, "ldt", "h", i), digits = 3), soft = round(H(ds, "ldt", "s", i), digits = 3))
+    hard = H(ds, "ldt", "h", i)
+    soft = H(ds, "ldt", "s", i)
+    dw = as.data.frame(t(sapply(hard$Ds, unlist)))
+    dw_s= merge(dw_s,dw)
+    edata_h_s = list(hard = round(hard$idata, digits = 3), soft = round(soft$idata, digits = 3))
     edata_h = append(edata_h, edata_h_s)
 }
-write.csv(edata_h, file_path, row.names = FALSE)
-
-# c <- proc.time()
+# write.csv(edata_h, file_path, row.names = FALSE)
+write.csv(dw, "./output/NDT_WSE/WaveletCoefficients.csv", row.names = FALSE)
 
 # soft = H(ds, "ldt", "s", 3)
-# print(soft)
+# print(soft$Ds)
 
 
 #Output estimation results
