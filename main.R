@@ -56,22 +56,28 @@ source(WT_Path)
 
 # Calling Hal wavelet estimation without data transformation
 # create file name and path
-time = Sys.time() %>% format("%H-%M-%S")
-file_name = paste0(time, ".csv")
-directory_path = "./output/NDT_WSE/"
-file_path = paste0(directory_path, file_name)
+# time = Sys.time() %>% format("%H-%M-%S")
+# file_name = paste0(time, ".csv")
+# directory_path = "./output/NDT_WSE/"
+# file_path = paste0(directory_path, file_name)
 
-edata_h = list()
+time = Sys.time() %>% format("%H-%M-%S")
+dw_s = data.frame()
 for(i in 2:log(getGroupLength(length(ds)), base = 2)){
     hard = H(ds, "ldt", "h", i)
     soft = H(ds, "ldt", "s", i)
-    dw = as.data.frame(t(sapply(hard$Ds, unlist)))
-    dw_s= merge(dw_s,dw)
+    hard_coe= rbind(hard$Cs,hard$Ds,hard$Denoise_Ds)
+    soft_coe= rbind(soft$Cs,soft$Ds,soft$Denoise_Ds)
+    rbind(hard_coe,soft_coe)
+    file_name_edata = paste0(time,"_edata_J=",i  ,".csv")
+    file_name_coe = paste0(time,"_coeJ=",i  ,".csv")
+    directory_path = "./output/NDT_WSE/"
+    file_path = paste0(directory_path, file_name_edata)
     edata_h_s = list(hard = round(hard$idata, digits = 3), soft = round(soft$idata, digits = 3))
-    edata_h = append(edata_h, edata_h_s)
+    write.csv(edata_h_s, file_path, row.names = FALSE)
 }
 # write.csv(edata_h, file_path, row.names = FALSE)
-write.csv(dw, "./output/NDT_WSE/WaveletCoefficients.csv", row.names = FALSE)
+# write.csv(dw_s, "./output/NDT_WSE/WaveletCoefficients.csv", row.names = FALSE)
 
 # soft = H(ds, "ldt", "s", 3)
 # print(soft$Ds)
