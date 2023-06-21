@@ -1,24 +1,11 @@
 # install packages "tidyverse"
 # install.packages("tidyverse")
-library(tidyverse)
+# library(tidyverse)
 
-# Loading datainstall.packages("writexl")
+# Load data set
 dataPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/DS/DS1.txt")
-# dsに変更
 ds = read.table(dataPath)[2]
 ds = as.numeric(ds$V2)
-
-# dataPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/DS2.txt")
-# ds2 = read.table(dataPath)[2]
-# ds2 = as.numeric(ds2$V2)
-
-# dataPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/DS3.txt")
-# ds3 = read.table(dataPath)[2]
-# ds3 = as.numeric(ds3$V2)
-
-# dataPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/DS4.txt")
-# ds4 = read.table(dataPath)[2]
-# ds4 = as.numeric(ds4$V2)
 
 # Load Hal wavelet estimation module
 WSE_Path = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/WaveletShrinkageEestimation.R")
@@ -35,30 +22,19 @@ create_file = function(i, directory_path, time)
 {
     file_name_edata = paste0(time,"_edata_J=",i  ,".csv")
     file_name_coe = paste0(time,"_coe_J=",i  ,".csv")
+    file_name_variable = paste0(time,"_var_J=",i  ,".RData")
     edata = paste0(directory_path, file_name_edata)
     coe = paste0(directory_path, file_name_coe)
-    file_path = list(edata = edata, coe = coe)
+    variable = paste0(directory_path, file_name_variable)
+    file_path = list(edata = edata, coe = coe, variable = variable)
     return(file_path)
 }
 
-# Calculate the cumulative value of the data
-# cul_ds1 = toCulData(ds1)
-# print(cul_ds1)
 
-# Calling Hal wavelet estimation based on Anscombe data transformation
-# idata_hft = HFT(ds1,"ut","s")
-# cul_idata_hft = toCulData(idata_hft)
-# mseRes = MSE(cul_idata_hft,cul_ds1)
-# print(round(mseRes,3))
-
-# idata_hft = HFT(ds1,"ut","h")
-# cul_idata_hft = toCulData(idata_hft)
-# mseRes = MSE(cul_idata_hft,cul_ds1)
-# print(round(mseRes,3))
-
-#Output estimation results
+# ===============================================================
 # H
 # Calling Hal wavelet estimation without data transformation
+# ===============================================================
 time = Sys.time() %>% format("%H-%M-%S")
 directory_path = "./output/NDT_WSE/"
 for(i in 2:log(getGroupLength(length(ds)), base = 2)){
@@ -71,10 +47,12 @@ for(i in 2:log(getGroupLength(length(ds)), base = 2)){
     file_path = create_file(i, directory_path, time)
     write.csv(edata, file_path$edata, row.names = FALSE)
     write.csv(coe, file_path$coe, row.names = FALSE)
+    save(hard, soft, file = file_path$variable)
 }
-
+# ===============================================================
 # HAT_A1
-# Calling Hal wavelet estimation without data transformation
+# Calling Hal wavelet estimation with Anscombe
+# ===============================================================
 time = Sys.time() %>% format("%H-%M-%S")
 directory_path = "./output/DT_Ans_WSE/A1/"
 for(i in 2:log(getGroupLength(length(ds)), base = 2)){
@@ -87,10 +65,10 @@ for(i in 2:log(getGroupLength(length(ds)), base = 2)){
     file_path = create_file(i, directory_path, time)
     write.csv(ut_edata, file_path$edata, row.names = FALSE)
     write.csv(ut_coe, file_path$coe, row.names = FALSE)
+    save(ut_hard, ut_soft, file = file_path$variable)
 }
 
 # HAT_A2
-# Calling Hal wavelet estimation without data transformation
 time = Sys.time() %>% format("%H-%M-%S")
 directory_path = "./output/DT_Ans_WSE/A2/"
 for(i in 2:log(getGroupLength(length(ds)), base = 2)){
@@ -103,6 +81,7 @@ for(i in 2:log(getGroupLength(length(ds)), base = 2)){
     file_path = create_file(i, directory_path, time)
     write.csv(ut_edata, file_path$edata, row.names = FALSE)
     write.csv(ut_coe, file_path$coe, row.names = FALSE)
+    save(ut_hard, ut_soft, file = file_path$variable)
 }
 
 # HAT_A3
@@ -119,10 +98,13 @@ for(i in 2:log(getGroupLength(length(ds)), base = 2)){
     file_path = create_file(i, directory_path, time)
     write.csv(ut_edata, file_path$edata, row.names = FALSE)
     write.csv(ut_coe, file_path$coe, row.names = FALSE)
+    save(ut_hard, ut_soft, file = file_path$variable)
 }
 
+# ===============================================================
 # HBT_B1
-# Calling Hal wavelet estimation without data transformation
+# Calling Hal wavelet estimation with Bartlett
+# ===============================================================
 time = Sys.time() %>% format("%H-%M-%S")
 directory_path = "./output/DT_Bar_WSE/B1/"
 for(i in 2:log(getGroupLength(length(ds)), base = 2)){
@@ -135,6 +117,7 @@ for(i in 2:log(getGroupLength(length(ds)), base = 2)){
     file_path = create_file(i, directory_path, time)
     write.csv(ut_edata, file_path$edata, row.names = FALSE)
     write.csv(ut_coe, file_path$coe, row.names = FALSE)
+    save(ut_hard, ut_soft, file = file_path$variable)
 }
 
 
@@ -152,10 +135,13 @@ for(i in 2:log(getGroupLength(length(ds)), base = 2)){
     file_path = create_file(i, directory_path, time)
     write.csv(ut_edata, file_path$edata, row.names = FALSE)
     write.csv(ut_coe, file_path$coe, row.names = FALSE)
+    save(ut_hard, ut_soft, file = file_path$variable)
 }
 
+# ===============================================================
 # HFitT
-# Calling Hal wavelet estimation without data transformation
+# Calling Hal wavelet estimation with Fisz
+# ===============================================================
 time = Sys.time() %>% format("%H-%M-%S")
 directory_path = "./output/DT_Fit_WSE/"
 for(i in 2:log(getGroupLength(length(ds)), base = 2)){
@@ -168,10 +154,13 @@ for(i in 2:log(getGroupLength(length(ds)), base = 2)){
     file_path = create_file(i, directory_path, time)
     write.csv(ut_edata, file_path$edata, row.names = FALSE)
     write.csv(ut_coe, file_path$coe, row.names = FALSE)
+    save(ut_hard, ut_soft, file = file_path$variable)
 }
 
+# ===============================================================
 # HFreT
-# Calling Hal wavelet estimation without data transformation
+# Calling Hal wavelet estimation with Freeman
+# ===============================================================
 time = Sys.time() %>% format("%H-%M-%S")
 directory_path = "./output/DT_Fre_WSE/"
 for(i in 2:log(getGroupLength(length(ds)), base = 2)){
@@ -184,9 +173,14 @@ for(i in 2:log(getGroupLength(length(ds)), base = 2)){
     file_path = create_file(i, directory_path, time)
     write.csv(ut_edata, file_path$edata, row.names = FALSE)
     write.csv(ut_coe, file_path$coe, row.names = FALSE)
+    save(ut_hard, ut_soft, file = file_path$variable)
 }
 
 
+
+# Calculate the cumulative value of the data
+# cul_ds1 = toCulData(ds1)
+# print(cul_ds1)
 
 # evaluation
 # Calculate MSE
