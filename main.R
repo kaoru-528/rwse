@@ -1,6 +1,6 @@
 # install packages "tidyverse"
 # install.packages("tidyverse")
-# library(tidyverse)
+library(tidyverse)
 
 # Load data set
 dataPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/DS/DS1.txt")
