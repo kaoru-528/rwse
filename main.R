@@ -120,9 +120,10 @@ for(i in 2:log(getGroupLength(length(ds)), base = 2)){
     save(ut_hard, ut_soft, file = file_path$variable)
 }
 
-
+# ===============================================================
 # HBT_B2
 # Calling Hal wavelet estimation without data transformation
+# ===============================================================
 time = Sys.time() %>% format("%H-%M-%S")
 directory_path = "./output/DT_Bar_WSE/B2/"
 for(i in 2:log(getGroupLength(length(ds)), base = 2)){
