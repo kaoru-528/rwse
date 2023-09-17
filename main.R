@@ -31,42 +31,43 @@ create_file = function(i, directory_path, time)
 }
 
 
-# ===============================================================
-# H
-# Calling Hal wavelet estimation without data transformation
-# ===============================================================
-time = Sys.time() %>% format("%H-%M-%S")
-directory_path = "./output/NDT_WSE/"
-for(i in 2:log(getGroupLength(length(ds)), base = 2)){
-    hard = H(ds, "ldt", "h", 3)
-    soft = H(ds, "ldt", "s", 3)
-    edata = list(hard = round(hard$idata, digits = 3), soft = round(soft$idata, digits = 3))
-    hard_coe= rbind("Cs",as.data.frame(t(sapply(hard$Cs, unlist))),"Ds",as.data.frame(t(sapply(hard$Ds, unlist))),"Denoise_Ds",as.data.frame(t(sapply(hard$Denoise_Ds, unlist))))
-    soft_coe= rbind("Cs",as.data.frame(t(sapply(soft$Cs, unlist))),"Ds",as.data.frame(t(sapply(soft$Ds, unlist))),"Denoise_Ds",as.data.frame(t(sapply(soft$Denoise_Ds, unlist))))
-    coe = rbind("hard",hard_coe,"soft",soft_coe)
-    file_path = create_file(i, directory_path, time)
-    write.csv(edata, file_path$edata, row.names = FALSE)
-    write.csv(coe, file_path$coe, row.names = FALSE)
-    save(hard, soft, file = file_path$variable)
-}
 # # ===============================================================
-# # HAT_A1
-# # Calling Hal wavelet estimation with Anscombe
+# # H
+# # Calling Hal wavelet estimation without data transformation
 # # ===============================================================
 # time = Sys.time() %>% format("%H-%M-%S")
-# directory_path = "./output/DT_Ans_WSE/A1/"
+# directory_path = "./output/NDT_WSE/"
 # for(i in 2:log(getGroupLength(length(ds)), base = 2)){
-#     ut_hard = HAT(ds, "ut", "h", 1,i)
-#     ut_soft = HAT(ds, "ut", "s", 1,i)
-#     ut_edata = list(ut_hard = round(ut_hard$idata, digits = 3), soft = round(ut_soft$idata, digits = 3))
-#     ut_hard_coe= rbind("Cs",as.data.frame(t(sapply(ut_hard$Cs, unlist))),"Ds",as.data.frame(t(sapply(ut_hard$Ds, unlist))),"Denoise_Ds",as.data.frame(t(sapply(ut_hard$Denoise_Ds, unlist))))
-#     ut_soft_coe= rbind("Cs",as.data.frame(t(sapply(ut_soft$Cs, unlist))),"Ds",as.data.frame(t(sapply(ut_soft$Ds, unlist))),"Denoise_Ds",as.data.frame(t(sapply(ut_soft$Denoise_Ds, unlist))))
-#     ut_coe = rbind("hard",ut_hard_coe,"soft",ut_soft_coe)
+#     hard = H(ds, "ldt", "h", 3)
+#     soft = H(ds, "ldt", "s", 3)
+#     edata = list(hard = round(hard$idata, digits = 3), soft = round(soft$idata, digits = 3))
+#     hard_coe= rbind("Cs",as.data.frame(t(sapply(hard$Cs, unlist))),"Ds",as.data.frame(t(sapply(hard$Ds, unlist))),"Denoise_Ds",as.data.frame(t(sapply(hard$Denoise_Ds, unlist))))
+#     soft_coe= rbind("Cs",as.data.frame(t(sapply(soft$Cs, unlist))),"Ds",as.data.frame(t(sapply(soft$Ds, unlist))),"Denoise_Ds",as.data.frame(t(sapply(soft$Denoise_Ds, unlist))))
+#     coe = rbind("hard",hard_coe,"soft",soft_coe)
 #     file_path = create_file(i, directory_path, time)
-#     write.csv(ut_edata, file_path$edata, row.names = FALSE)
-#     write.csv(ut_coe, file_path$coe, row.names = FALSE)
-#     save(ut_hard, ut_soft, file = file_path$variable)
+#     write.csv(edata, file_path$edata, row.names = FALSE)
+#     write.csv(coe, file_path$coe, row.names = FALSE)
+#     save(hard, soft, file = file_path$variable)
 # }
+
+# ===============================================================
+# HAT_A1
+# Calling Hal wavelet estimation with Anscombe
+# ===============================================================
+time = Sys.time() %>% format("%H-%M-%S")
+directory_path = "./output/DT_Ans_WSE/A1/"
+for(i in 2:log(getGroupLength(length(ds)), base = 2)){
+    ut_hard = HAT(ds, "ut", "h", 1,i)
+    ut_soft = HAT(ds, "ut", "s", 1,i)
+    ut_edata = list(ut_hard = round(ut_hard$idata, digits = 3), soft = round(ut_soft$idata, digits = 3))
+    ut_hard_coe= rbind("Cs",as.data.frame(t(sapply(ut_hard$Cs, unlist))),"Ds",as.data.frame(t(sapply(ut_hard$Ds, unlist))),"Denoise_Ds",as.data.frame(t(sapply(ut_hard$Denoise_Ds, unlist))))
+    ut_soft_coe= rbind("Cs",as.data.frame(t(sapply(ut_soft$Cs, unlist))),"Ds",as.data.frame(t(sapply(ut_soft$Ds, unlist))),"Denoise_Ds",as.data.frame(t(sapply(ut_soft$Denoise_Ds, unlist))))
+    ut_coe = rbind("hard",ut_hard_coe,"soft",ut_soft_coe)
+    file_path = create_file(i, directory_path, time)
+    write.csv(ut_edata, file_path$edata, row.names = FALSE)
+    write.csv(ut_coe, file_path$coe, row.names = FALSE)
+    save(ut_hard, ut_soft, file = file_path$variable)
+}
 
 # # HAT_A2
 # time = Sys.time() %>% format("%H-%M-%S")
