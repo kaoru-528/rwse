@@ -23,23 +23,15 @@ source(Evaluation_Path)
 H = function(data,thresholdName,thresholdMode, index)
 {
   groupLength = 2^index
-  # Get data length
   dataLength = length(data)
-  #print("dataLength")
-  #print(dataLength)
   
 
   if(groupLength >= getGroupLength(dataLength)){
-    # Get subdata length
     groupLength = getGroupLength(dataLength)
-    #print("groupLength")
-    #print(groupLength)
   }
   
   # Cut the original data into a number of sub-data of length 2^J
   groups = getGroups(data,groupLength)
-  #print("groups[[1]]")
-  #print(groups[[1]])
   
   # Calculate c
   #print("Start calculating scale factor")
