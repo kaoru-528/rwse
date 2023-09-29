@@ -98,34 +98,22 @@ HAT = function(data,thresholdName,thresholdMode,var=1, index)
   if(groupLength >= getGroupLength(dataLength)){
     # Get subdata length
     groupLength = getGroupLength(dataLength)
-    #print("groupLength")
-    #print(groupLength)
   }
   
   # Cut the original data into a number of sub-data of length 2^J
   groups = getGroups(data,groupLength)
-  #print("groups[[1]]")
-  #print(groups[[1]])
   
   #Transform sub-data to Gaussian data by Anscombe
   a_groups = AnscombeTransformFromGroups(groups,var)
-  #print("Anscombe : groups[[1]]")
-  #print(groups[[1]])
   
   # Calculate c
   #print("Start calculating scale factor")
   Cs = getScalingCoefficientsFromGroups(a_groups)
-  #print("Cs[[1]]")
-  #print(Cs[[1]])
   
   #Calculate d
-  #print("Start calculating wavelet coefficients")
   Ds = getWaveletCoefficientsFromGroups(Cs)
-  #print("Ds[[1]]")
-  #print(Ds[[1]])
   
   # Noise reduction of wavelet coefficients using thresholdMode noise reduction rule, thresholdName threshold
-  #print("Start calculating the noise reduction wavelet coefficients")
   Denoise_Ds = ThresholdForGroups(Ds,thresholdMode,thresholdName)
   
   # No noise reduction (for testing)
@@ -137,11 +125,8 @@ HAT = function(data,thresholdName,thresholdMode,var=1, index)
   # Perform inverse wavelet conversion
   #print("Start restoring data")
   i_groups = inverseHaarWaveletTransformForGroups(Cs,Denoise_Ds)
-  #print("i_groups[[1]]")
-  #print(i_groups[[1]])
   
   # Perform moving average
-  #print("Perform moving average")
   a_idata = movingAverage(i_groups,dataLength)
   
   # Perform inverse Anscombe data conversion
