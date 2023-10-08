@@ -18,7 +18,8 @@ print("Load Hal wavelet Transformation module")
 # print(WT_Path)
 source(WT_Path)
 
-hard = wse(ds, "none", "ldt", "s", 1, 5)
+# none = wse(ds, "none", "ldt", "h", 1, 3)
+a = wse(ds, "A1", "lut", "h", 1, 5)
 
 
 # # ===============================================================
