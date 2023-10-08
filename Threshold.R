@@ -119,21 +119,10 @@ getLevelDependentThreshold = function(J,now_level,mean)
 	log2j = log(2 ** now_level)
 	b = 2 * log2j
 	c = (4 * log2j) ** 2
-	d = 8 * mean * log2j
+	d = 8 * mean * log2j * (2 ** (J - now_level))
 	t = a * (b + ((c + d) ** 0.5))
-	
 	return(t)
 }
-# getLevelDependentThreshold = function(J,now_level,mean)
-# {
-# 	a = 2 ** (-1 * 0.5 * (J - now_level))
-# 	log2j = log(2 ** now_level)
-# 	b = log2j
-# 	c = log2j ** 2
-# 	d = 2 * mean * log2j * 2 ** now_level
-# 	t = a * (b + ((c + d) ** 0.5))	
-# 	return(t)
-# }
 
 
 # Thresholding the wavelet coefficients of a layer at a threshold value of t
@@ -154,31 +143,27 @@ ThresholdForOneLevel = function(WaveletCoefficients,mode,t)
 #Thresholding of the value coe according to the threshold r
 Threshold = function(coe,r,mode)
 {
-	if(mode == 'h')
-	{
-		if(abs(coe) <= r)
-		{
+	if(mode == 'h'){
+		print("hard")
+		if(abs(coe) <= r){
 	    return(0)
 		}
-		else
-		{
+		else{
 	    return(coe)
 		}
 	}
-	else
-	{
-		if(abs(coe) <= r)
-		{
+	else{
+		if(abs(coe) <= r){
 	    return(0)
 		}
-	    else if(coe > 0)
-	    {
-	        return(coe - r)
-	    }
-	    else
-	    {
-	        return(coe + r)
-	    }
+		else{
+			if(coe > 0){
+	        	return(coe - r)
+	    	}
+	    	else{
+	        	return(coe + r)
+	    	}
+		}
 	}
 }
 
@@ -197,7 +182,7 @@ ldtThreshold = function(data,mode,loop_level,dataLength,C)
 	while (i <= length(data))
 	{
 		#Get ldt threshold
-		mean = C[[loop_level]][i]
+		mean = 2.145161
 		#print(mean)
 		#t = getLevelDependentThreshold(J,j,mean)
 		t = getLevelDependentThreshold(J,loop_level,mean)

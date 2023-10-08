@@ -23,14 +23,16 @@ source(Evaluation_Path)
 wse = function(data, dt, thresholdName, thresholdMode, var, index)
 {
   groupLength = 2^index
+  # Get data length
   dataLength = length(data)
-
   if(groupLength >= getGroupLength(dataLength)){
+    # Get subdata length
     groupLength = getGroupLength(dataLength)
   }
-  
+
   # Cut the original data into a number of sub-data of length 2^J
   groups = getGroups(data,groupLength)
+
 
   if(dt == "Fi"){
     # Transform the sub-data into Gaussian data by Fisz transformation
@@ -38,6 +40,8 @@ wse = function(data, dt, thresholdName, thresholdMode, var, index)
     Ds1  = getWaveletCoefficientsFromGroups(Cs1)
     Fi1  = FiszTransformFromGroups(Cs1,Ds1,var)
     f_groups = inverseHaarWaveletTransformForGroups(Cs1,Fi1)
+
+    f_groups = lapply(f_groups, function(x) x/groupLength**0.5)
     
     # Calculate c
     #print("Start calculating scale factor")
@@ -65,11 +69,12 @@ wse = function(data, dt, thresholdName, thresholdMode, var, index)
     
     # Perform inverse wavelet conversion
     #print("Start restoring data")
-    igroups = inverseHaarWaveletTransformForGroups(Cs4,Ds3)
+    thresholded_groups = inverseHaarWaveletTransformForGroups(Cs4,Ds3)
+    thresholded_groups = lapply(thresholded_groups, function(x) x*groupLength**0.5)
     
     # Perform moving average
     #print("Perform moving average")
-    thresholded_data= movingAverage(igroups,dataLength)
+    thresholded_data= movingAverage(thresholded_groups,dataLength)
 
     thresholded_data = list(idata=thresholded_data, Cs=Cs4,Ds=Ds3, Denoise_Ds=Denoise_Ds2)
   }
@@ -93,7 +98,7 @@ wse = function(data, dt, thresholdName, thresholdMode, var, index)
     else{
       groups = groups
     }
-    
+    groups = lapply(groups, function(x) x/groupLength**0.5)
     # Calculate c
     Cs = getScalingCoefficientsFromGroups(groups)
     
@@ -109,12 +114,14 @@ wse = function(data, dt, thresholdName, thresholdMode, var, index)
     if(thresholdName == "none"){
       Denoise_Ds = Ds
     }
-    
+
     # Perform inverse wavelet conversion
     thresholded_groups = inverseHaarWaveletTransformForGroups(Cs,Denoise_Ds)
-    
+    thresholded_groups = lapply(thresholded_groups, function(x) x*groupLength**0.5)
+
     # Perform moving average
     thresholded_data = movingAverage(thresholded_groups,dataLength)
+
 
     if(dt == "A1"){
     # Perform inverse Anscombe data conversion

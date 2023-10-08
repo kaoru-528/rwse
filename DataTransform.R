@@ -152,8 +152,8 @@ inverseAnscombeTransform3FromGroup = function(AT_data,var)
 
 # -----------------------------------------------
 # Bartlet
-#Applying Bartlett transformation to multiple data sets simultaneously, the variance after transformation is var
 # -----------------------------------------------
+#Applying Bartlett transformation to multiple data sets simultaneously, the variance after transformation is var
 BartlettTransformFromGroups = function(groups,var)
 {
     groupsLength = length(groups)
