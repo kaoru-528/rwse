@@ -20,7 +20,7 @@ print(Evaluation_Path)
 source(Evaluation_Path)
 
 # Hal wavelet estimation without data transformation
-wse = function(data, dt, thresholdName, thresholdMode, var, index)
+wse = function(data, dt, thresholdName, thresholdMode, var, index, tt)
 {
   groupLength = 2^index
   # Get data length
@@ -53,11 +53,6 @@ wse = function(data, dt, thresholdName, thresholdMode, var, index)
     # Noise reduction of wavelet coefficients using thresholdMode noise reduction rule, thresholdName threshold
     #print("Start calculating the noise reduction wavelet coefficients")
     Denoise_Ds2 = ThresholdForGroups(Ds2,thresholdMode,thresholdName)
-    # No noise reduction (for testing)
-    if(thresholdName == "none")
-    {
-      Denoise_Ds2 = Ds2
-    }
       
     # Perform inverse Fisz data conversion
     f_igroups = inverseHaarWaveletTransformForGroups(Cs2,Denoise_Ds2)
@@ -78,7 +73,6 @@ wse = function(data, dt, thresholdName, thresholdMode, var, index)
 
     thresholded_data = list(idata=thresholded_data, Cs=Cs4,Ds=Ds3, Denoise_Ds=Denoise_Ds2)
   }
-
   else{
     if(dt == "A1" || dt == "A2"|| dt == "A3"){
       #Transform sub-data to Gaussian data by Anscombe
@@ -98,7 +92,9 @@ wse = function(data, dt, thresholdName, thresholdMode, var, index)
     else{
       groups = groups
     }
-    groups = lapply(groups, function(x) x/groupLength**0.5)
+
+    groups = lapply(groups, function(x) x/(groupLength**0.5))
+
     # Calculate c
     Cs = getScalingCoefficientsFromGroups(groups)
     
@@ -108,13 +104,9 @@ wse = function(data, dt, thresholdName, thresholdMode, var, index)
 
     # Noise reduction of wavelet coefficients using thresholdMode noise reduction rule, thresholdName threshold
     #print("Start calculating the noise reduction wavelet coefficients")
-    Denoise_Ds = ThresholdForGroups(Ds,thresholdMode,thresholdName)
-    
-    # No noise reduction (for testing)
-    if(thresholdName == "none"){
-      Denoise_Ds = Ds
-    }
 
+    Denoise_Ds = ThresholdForGroups(Ds,thresholdMode,thresholdName, dt, groups, tt)
+    
     # Perform inverse wavelet conversion
     thresholded_groups = inverseHaarWaveletTransformForGroups(Cs,Denoise_Ds)
     thresholded_groups = lapply(thresholded_groups, function(x) x*groupLength**0.5)
