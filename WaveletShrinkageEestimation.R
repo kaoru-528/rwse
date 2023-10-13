@@ -22,6 +22,7 @@ source(Evaluation_Path)
 # Hal wavelet estimation without data transformation
 wse = function(data, dt, thresholdName, thresholdMode, var, index, tt)
 {
+  print(data)
   groupLength = 2^index
   # Get data length
   dataLength = length(data)
@@ -32,7 +33,6 @@ wse = function(data, dt, thresholdName, thresholdMode, var, index, tt)
 
   # Cut the original data into a number of sub-data of length 2^J
   groups = getGroups(data,groupLength)
-
 
   if(dt == "Fi"){
     # Transform the sub-data into Gaussian data by Fisz transformation
@@ -77,6 +77,8 @@ wse = function(data, dt, thresholdName, thresholdMode, var, index, tt)
     if(dt == "A1" || dt == "A2"|| dt == "A3"){
       #Transform sub-data to Gaussian data by Anscombe
       groups = AnscombeTransformFromGroups(groups,var)
+      print("A1")
+      print(groups)
     }
     else if(dt == "B1"){
       #Transform sub-data to Gaussian data by Bartlet
@@ -92,27 +94,34 @@ wse = function(data, dt, thresholdName, thresholdMode, var, index, tt)
     else{
       groups = groups
     }
-
+    print(groupLength)
     groups = lapply(groups, function(x) x/(groupLength**0.5))
+    print(groups)
 
     # Calculate c
     Cs = getScalingCoefficientsFromGroups(groups)
-    
     #Calculate d
     Ds = getWaveletCoefficientsFromGroups(Cs)
-  
 
     # Noise reduction of wavelet coefficients using thresholdMode noise reduction rule, thresholdName threshold
     #print("Start calculating the noise reduction wavelet coefficients")
 
     Denoise_Ds = ThresholdForGroups(Ds,thresholdMode,thresholdName, dt, groups, tt)
+    print("ThresholdValue_main")
+    print(tt)
     
     # Perform inverse wavelet conversion
     thresholded_groups = inverseHaarWaveletTransformForGroups(Cs,Denoise_Ds)
     thresholded_groups = lapply(thresholded_groups, function(x) x*groupLength**0.5)
 
+
     # Perform moving average
-    thresholded_data = movingAverage(thresholded_groups,dataLength)
+    if(thresholdName == "none"){
+      thresholded_data = thresholded_groups
+    }
+    else {
+      thresholded_data = movingAverage(thresholded_groups,dataLength)
+    }
 
 
     if(dt == "A1"){
@@ -144,7 +153,8 @@ wse = function(data, dt, thresholdName, thresholdMode, var, index, tt)
     
     thresholded_data = list(idata=thresholded_data, Cs=Cs,Ds=Ds, Denoise_Ds=Denoise_Ds)
   }
-
+  print("thresholded_data")
+  print(thresholded_data$idata)
   # Return Results
   return(thresholded_data)
 }
