@@ -25,6 +25,7 @@ ThresholdForGroup = function(GroupWaveletCoefficients,mode,ThresholdName,dt,grou
 		}
 		else if (ThresholdName == 'none') {
 		   t = tt
+		   print(t)
 		}
 		lists = list()
 		lists = append(lists,list(GroupWaveletCoefficients[[1]]))
@@ -56,21 +57,18 @@ ThresholdForGroup = function(GroupWaveletCoefficients,mode,ThresholdName,dt,grou
 		}
 	}
 	else{
-		if(ThresholdName == "lht"){
 			t = lhtThreshold(groups[[j]], dt, ThresholdName, mode)
-		}
-		j = j + 1
-		lists = list()
-		lists = append(lists,list(GroupWaveletCoefficients[[1]]))
-		i = 2
-		groupLength = length(GroupWaveletCoefficients)
-		while(i <= groupLength)
-		{
-			tempList = ThresholdForOneLevel(GroupWaveletCoefficients[[i]],mode,t)
-			lists = append(lists,list(tempList))
-			i = i + 1
-		}
-
+			j = j + 1
+			lists = list()
+			lists = append(lists,list(GroupWaveletCoefficients[[1]]))
+			i = 2
+			groupLength = length(GroupWaveletCoefficients)
+			while(i <= groupLength)
+			{
+				tempList = ThresholdForOneLevel(GroupWaveletCoefficients[[i]],mode,t)
+				lists = append(lists,list(tempList))
+				i = i + 1
+			}
 	}
     return(lists)
 }
@@ -146,16 +144,20 @@ ldtThreshold = function(data,mode,loop_level,dataLength,C)
 	return(tempList)
 }
 
-lhtThreshold <- function(origin_groups, transform_method, threshold_rule, mode) {
+lhtThreshold <- function(original_groups, transform_method, threshold_rule, mode) {
 print("lhtThreshold")
-subgroup_len = length(origin_groups)
-minimum <- optimize(f = loss_function, interval = c(-50, 50), original_group = origin_groups, dt = transform_method, thresholdName = threshold_rule, thresholdMode = mode, tol = 0.01)$minimum
+subgroup_len = length(original_groups)
+minimum <- optimize(f = loss_function, interval = c(-50,50), original_group = original_groups, dt = transform_method, thresholdName = threshold_rule, thresholdMode = mode, tol = 0.01)$minimum
+# minimum = optim(par = 1, fn = loss_function, original_group = original_groups, dt = transform_method, thresholdName = threshold_rule, thresholdMode = mode, method = "Brent",lower = -2,upper = 2)$par
 # minimumが負の値になる場合は0にする
-# print(minimum)
+print("minimum")
+print(minimum)
 if (minimum < 0) {
 minimum <- 0
 }
 threshold_value <- ((1 - log(2) / log(subgroup_len)) ^ (-0.5)) * minimum
+print("threshold_value")
+print(threshold_value)
 return(threshold_value)
 }
 
@@ -168,26 +170,21 @@ loss_function <- function(t, original_group, dt, thresholdName, thresholdMode) {
   even_index = log(length(even_group), base = 2)
 
   # 偶数番目と奇数番目についてWSEを行う
+  print(odd_group)
  thresholded_odd_group <- wse(odd_group, dt, "none", thresholdMode, 1, odd_index, t)
  thresholded_even_group <- wse(even_group, dt, "none", thresholdMode, 1, even_index, t)
-
-#  squared_error <- 0
-
-# for (i in 1:length(thresholded_odd_group$idata)) {
-#     odd_squared_error <- (thresholded_odd_group$idata[i] - original_group[2 * i - 1]) ^ 2
-#     even_squared_error <- (thresholded_even_group$idata[i] - original_group[2 * i]) ^ 2
-#     squared_error <- squared_error + odd_squared_error + even_squared_error
-#   }
-#   print(squared_error)
 
 	odd_ave_list = list()
 	even_ave_list = list()
 
+	# odd_ave_list <- numeric(length(thresholded_odd_group$idata))
+	# even_ave_list <- numeric(length(thresholded_even_group$idata))
+
 	for (i in 1:length(thresholded_odd_group$idata)) {
 	if (i != length(thresholded_odd_group$idata)) {
-		odd_ave <- (thresholded_odd_group[i]$idata + thresholded_odd_group[i + 1]$idata) * 0.5
+		odd_ave <- (thresholded_odd_group$idata[i] + thresholded_odd_group$idata[i + 1]) * 0.5
 	} else {
-		odd_ave <- (thresholded_odd_group[i]$idata + thresholded_odd_group[1]$idata) * 0.5
+		odd_ave <- (thresholded_odd_group$idata[i] + thresholded_odd_group$idata[1]) * 0.5
 	}
 	odd_ave_list= c(odd_ave_list, odd_ave)
 	}
@@ -200,15 +197,13 @@ loss_function <- function(t, original_group, dt, thresholdName, thresholdMode) {
 	}
 	even_ave_list= c(even_ave_list, even_ave)
 	}
-
-  print(even_ave_list)
   squared_error <- 0
-  
   for (i in 1:length(thresholded_odd_group$idata)) {
-	print(i)
-    odd_squared_error <- (odd_ave_list[[i]] - original_group[2 * i - 1]) ^ 2
-    even_squared_error <- (even_ave_list[[i]] - original_group[2 * i]) ^ 2
+    odd_squared_error <- (odd_ave_list[[i]][1] - original_group[2 * i - 1]) ^ 2
+    even_squared_error <- (even_ave_list[[i]][1] - original_group[2 * i]) ^ 2
     squared_error <- squared_error + odd_squared_error + even_squared_error
+	print("squared_error")
+	print(squared_error)
   }
   return(squared_error)
 }
