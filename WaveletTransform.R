@@ -26,7 +26,6 @@ getGroups = function(data, groupLength)
   i = 0
   dataLength = length(data)
   tempList = list()
-  #print(data)
   while (groupLength + i <= dataLength)
   {
     tempData = data
@@ -41,7 +40,7 @@ getGroups = function(data, groupLength)
 
 # 1/sqrt(2) times
 #Scale coefficients of discrete Hal wavelets expanded for a set of data
-getScalingCoefficientsFromGroup = function(timeList) 
+getScalingCoefficientsFromGroup = function(timeList)
 {
   lists = list()
   J = getHighestResolutionLevel( length(timeList) )

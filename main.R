@@ -1,6 +1,6 @@
 # install packages "tidyverse"
 # install.packages("tidyverse")
-library(tidyverse)
+# library(tidyverse)
 
 # Load data set
 dataPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/DS/DS1.txt")
@@ -18,8 +18,7 @@ print("Load Hal wavelet Transformation module")
 # print(WT_Path)
 source(WT_Path)
 
-hard = wse(ds, "none", "ldt", "s", 1, 5)
-
+a = wse(ds, "A1", "lht", "h", 1, 5, 1)
 
 # # ===============================================================
 # # H
@@ -31,7 +30,7 @@ hard = wse(ds, "none", "ldt", "s", 1, 5)
 #     hard = wse(ds, "none", "ldt", "h", 1, i)
 #     soft = wse(ds, "none", "ldt", "s", 1, i)
 #     edata = list(hard = round(hard$idata, digits = 3), soft = round(soft$idata, digits = 3))
-#     hard_coe= rbind("Cs",as.data.frame(t(sapply(hard$Cs, unlist))),"Ds",as.data.frame(t(sapply(hard$Ds, unlist))),"Denoise_Ds",as.data.frame(t(sapply(hard$Denoise_Ds, unlist))))
+#     hard_coe= rbind("Cs",as.data.frame(t(sapply(hard$Cs, ua$idatanlist))),"Ds",as.data.frame(t(sapply(hard$Ds, unlist))),"Denoise_Ds",as.data.frame(t(sapply(hard$Denoise_Ds, unlist))))
 #     soft_coe= rbind("Cs",as.data.frame(t(sapply(soft$Cs, unlist))),"Ds",as.data.frame(t(sapply(soft$Ds, unlist))),"Denoise_Ds",as.data.frame(t(sapply(soft$Denoise_Ds, unlist))))
 #     coe = rbind("hard",hard_coe,"soft",soft_coe)
 #     file_path = create_file(i, directory_path, time)
