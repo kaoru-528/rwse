@@ -22,7 +22,7 @@ source(Evaluation_Path)
 # Hal wavelet estimation without data transformation
 wse = function(data, dt, thresholdName, thresholdMode, var, index, tt)
 {
-  print(data)
+  # print(data)
   groupLength = 2^index
   # Get data length
   dataLength = length(data)
@@ -77,8 +77,8 @@ wse = function(data, dt, thresholdName, thresholdMode, var, index, tt)
     if(dt == "A1" || dt == "A2"|| dt == "A3"){
       #Transform sub-data to Gaussian data by Anscombe
       groups = AnscombeTransformFromGroups(groups,var)
-      print("A1")
-      print(groups)
+      # print("A1")
+      # print(groups)
     }
     else if(dt == "B1"){
       #Transform sub-data to Gaussian data by Bartlet
@@ -94,9 +94,9 @@ wse = function(data, dt, thresholdName, thresholdMode, var, index, tt)
     else{
       groups = groups
     }
-    print(groupLength)
+    # print(groupLength)
     groups = lapply(groups, function(x) x/(groupLength**0.5))
-    print(groups)
+    # print(groups)
 
     # Calculate c
     Cs = getScalingCoefficientsFromGroups(groups)
@@ -107,8 +107,8 @@ wse = function(data, dt, thresholdName, thresholdMode, var, index, tt)
     #print("Start calculating the noise reduction wavelet coefficients")
 
     Denoise_Ds = ThresholdForGroups(Ds,thresholdMode,thresholdName, dt, groups, tt)
-    print("ThresholdValue_main")
-    print(tt)
+    # print("ThresholdValue_main")
+    # print(tt)
     
     # Perform inverse wavelet conversion
     thresholded_groups = inverseHaarWaveletTransformForGroups(Cs,Denoise_Ds)
@@ -122,7 +122,6 @@ wse = function(data, dt, thresholdName, thresholdMode, var, index, tt)
     else {
       thresholded_data = movingAverage(thresholded_groups,dataLength)
     }
-
 
     if(dt == "A1"){
     # Perform inverse Anscombe data conversion
@@ -153,8 +152,8 @@ wse = function(data, dt, thresholdName, thresholdMode, var, index, tt)
     
     thresholded_data = list(idata=thresholded_data, Cs=Cs,Ds=Ds, Denoise_Ds=Denoise_Ds)
   }
-  print("thresholded_data")
-  print(thresholded_data$idata)
+  # print("thresholded_data")
+  # print(thresholded_data$idata)
   # Return Results
   return(thresholded_data)
 }

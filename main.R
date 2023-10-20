@@ -17,10 +17,8 @@ WT_Path = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/WaveletTra
 print("Load Hal wavelet Transformation module")
 # print(WT_Path)
 source(WT_Path)
-sink("sample.txt")  # 空のテキストファイル”sample.txt”を作成
-# none = wse(ds, "none", "ldt", "h", 1, 3)
+
 a = wse(ds, "A1", "lht", "h", 1, 5, 1)
-sink()                     # 入力終了
 
 # # ===============================================================
 # # H
