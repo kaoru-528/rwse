@@ -57,6 +57,18 @@ wse(
 | s | Soft thresholding method |
 | h | Hard thresholding method |
 
+### 実行結果
+wse()の返り値は推定値, スケーリング係数, ウェーブレット係数, 閾値処理後のウェーブレット係数を返します. データ構造は以下となります.
+```
+result = wse()
+
+result
+$estimationData #推定値
+$cs #スケーリング係数
+$ds #ウェーブレット係数
+$denoiseDs #閾値処理後のウェーブレット係数
+```
+
 ## tipsh()
 tipshアルゴリズムを用いてwseを行う関数です. 各引数以下をとることができます. データ変換, 閾値法は`wse()`と同様です.
 ```
@@ -66,6 +78,17 @@ tipsh(
    var = データ変換の際の分散を指定(デフォルトは1),
    index = 分割データのデータ長を指定,
 )
+```
+### 実行結果
+tipsh()の返り値は推定値, スケーリング係数, ウェーブレット係数, 閾値処理後のウェーブレット係数を返します. データ構造は以下となります.
+```
+result = tipsh()
+
+result
+$estimationData #推定値
+$cs #スケーリング係数
+$ds #ウェーブレット係数
+$denoiseDs #閾値処理後のウェーブレット係数
 ```
 
 ## createResult()
