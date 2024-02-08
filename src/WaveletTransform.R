@@ -5,9 +5,9 @@ getHighestResolutionLevel = function(groupLength)
   level = as.integer(level)
   return(level)
 }
-#dataLength以下の最大の2の整数乗を満たす値を取得する。
-#例：dataLength = 62の場合、戻り値は32です。
-#理由：2^5 = 32 < 62 < 64 = 2^6
+#Get a value that satisfies the largest integer power of 2 less than or equal to dataLength.
+#example：when dataLength = 62, return 32.
+#reason：2^5 = 32 < 62 < 64 = 2^6
 getGroupLength = function(dataLength)
 {
   i = 1
@@ -20,7 +20,7 @@ getGroupLength = function(dataLength)
   return(x)
 }
 
-#任意の長さのデータセットデータを、groupLengthに従って複数のサブデータセットに分割する。
+#Divide data set data of arbitrary length into multiple sub-datasets according to groupLength.
 getGroups = function(data, groupLength)
 {
   i = 0
@@ -38,7 +38,6 @@ getGroups = function(data, groupLength)
   return(tempList)
 }
 
-# 1/sqrt(2) times
 #Scale coefficients of discrete Hal wavelets expanded for a set of data
 getScalingCoefficientsFromGroup = function(timeList)
 {
@@ -62,7 +61,6 @@ getScalingCoefficientsFromGroup = function(timeList)
   return(lists)
 }
 
-# 1/sqrt(2)times
 #Wavelet coefficients of discrete Hal wavelets are simultaneously expanded for multiple data sets
 getWaveletCoefficientsFromGroup = function(coeList)
 {
@@ -116,7 +114,6 @@ getWaveletCoefficientsFromGroups = function(CS)
   return(lists)
 }
 
-# 1/sqrt(2)times
 #Convert a set of Haar wavelet coefficients with Haar scale coefficients to the original data
 inverseHaarWaveletTransformForGroup = function(scalingCoe,waveletCoe)
 {
@@ -182,8 +179,6 @@ movingAverage = function(iGroups,dataLength)
       counter[i + j - 1] = counter[i + j - 1] + 1
       j = j + 1
     }
-    #print("循环")
-    #print(dataSum)
     i = i + 1
   }
 
@@ -191,10 +186,10 @@ movingAverage = function(iGroups,dataLength)
   while(k <= dataLength)
   {
     result[k] = dataSum[k] / counter[k]
-    #if(result[k] < 0)
-    #{
-    #  result[k] = 0
-    #}
+    if(result[k] < 0)
+    {
+     result[k] = 0
+    }
     k = k + 1
   }
   return(result)

@@ -1,11 +1,11 @@
-ThresholdForGroups = function(Ds,mode,ThresholdName,dt,groups ,tt)
+ThresholdForGroups = function(Ds,mode,ThresholdName,dt,groups ,initThresholdvalue)
 {
 	groupLength = length(Ds)
 	lists = list()
 	u = 1
 	while(u <= groupLength)
 	{
-		list_s = ThresholdForGroup(Ds[[u]],mode,ThresholdName,dt,groups, tt, u)
+		list_s = ThresholdForGroup(Ds[[u]],mode,ThresholdName,dt,groups, initThresholdvalue, u)
 		lists = append(lists, list(list_s))
 		u = u + 1
 	}
@@ -13,7 +13,7 @@ ThresholdForGroups = function(Ds,mode,ThresholdName,dt,groups ,tt)
 }
 
 #Apply the soft or hard thresholding method of ThresholdName to a set of wavelet coefficients
-ThresholdForGroup = function(GroupWaveletCoefficients,mode,ThresholdName,dt,groups, tt,j)
+ThresholdForGroup = function(GroupWaveletCoefficients,mode,ThresholdName,dt,groups, initThresholdvalue,j)
 {
 	if(ThresholdName == 'ut'|| ThresholdName == 'ldt' || ThresholdName == 'lut'|| ThresholdName == 'none'){
 		dataLength = length(GroupWaveletCoefficients[[1]])
@@ -24,7 +24,7 @@ ThresholdForGroup = function(GroupWaveletCoefficients,mode,ThresholdName,dt,grou
 			t = getUniversalThreshold(dataLength)
 		}
 		else if (ThresholdName == 'none') {
-		   t = tt
+		   t = initThresholdvalue
 		}
 		lists = list()
 		lists = append(lists,list(GroupWaveletCoefficients[[1]]))
@@ -34,13 +34,14 @@ ThresholdForGroup = function(GroupWaveletCoefficients,mode,ThresholdName,dt,grou
 		if(ThresholdName == 'ldt' || ThresholdName == 'lut')
 		{
 			C = getScalingCoefficientsFromGroup(GroupWaveletCoefficients[[1]])
+        	lam0 = mean(GroupWaveletCoefficients[[1]])*(dataLength**0.5)
 		}
 
 		while(i <= groupLength)
 		{
 			if(ThresholdName == 'ldt')
 			{
-				tempList = ldtThreshold(GroupWaveletCoefficients[[i]],mode,i,dataLength,C)
+				tempList = ldtThreshold(GroupWaveletCoefficients[[i]],mode,i,dataLength,lam0)
 			}
 			else
 			{
@@ -95,18 +96,19 @@ getUniversalThreshold = function(groupLength)
 	c = b**0.5
 	return(c)
 }
+
 # ---------------------------------
 # Get ldt threshold
 # ldt:Level-dependent-Threshold
 # ---------------------------------
 getLevelDependentThreshold = function(J,now_level,mean)
 {
-	a = 2 ** (0.5 * (J - now_level + 2))
-	log2j = log(2 ** now_level)
+	a = 2 ** (-1 * 0.5 * (now_level+1))
+	log2j = log(2 ** (J - now_level +1))
 	b = 2 * log2j
-	c = (4 * log2j) ** 2
-	d = 8 * mean * log2j * (2 ** (J - now_level))
-	t = a * (b + ((c + d) ** 0.5))
+	c = 4 * (log2j) ** 2
+	d = 8 * mean * log2j
+	t = a * (b + ((c+d) ** 0.5))
 	return(t)
 }
 
@@ -126,21 +128,19 @@ ThresholdForOneLevel = function(WaveletCoefficients,mode,t)
 }
 
 #Calculating ldt and thresholding the data
-ldtThreshold = function(data,mode,loop_level,dataLength,C)
+ldtThreshold = function(data,mode,loop_level,dataLength,lam0)
 {
 	#Highest Resolution
 	J = getHighestResolutionLevel(dataLength)
-	#Current Resolution
-	#j = J - loop_level + 1
 	#Thresholding the data one by one
 	i = 1
 	tempList = c()
+	mean = lam0/length(data)
 	while (i <= length(data))
 	{
 		#Get ldt threshold
-		# mean = 2.145161
-		mean = C[[loop_level]][i]
 		t = getLevelDependentThreshold(J,loop_level,mean)
+		#Threshold processing
 		denoise_data = Threshold(data[[i]],t,mode)
 		tempList = append(tempList,denoise_data)
 		i = i + 1
@@ -149,27 +149,27 @@ ldtThreshold = function(data,mode,loop_level,dataLength,C)
 }
 
 lhtThreshold <- function(original_groups, transform_method, threshold_rule, mode ,next_value) {
-# 偶数番目と奇数番目に分ける
-subgroup_len = length(original_groups)
-# minimum <- optimize(f = loss_function, interval = c(-5,5), original_group = original_groups, dt = transform_method, thresholdName = threshold_rule, thresholdMode = mode,next_value = next_value, tol = 0.00000001)$minimum
-minimum = optim(par = 0, fn = loss_function, original_group = original_groups, dt = transform_method, thresholdName = threshold_rule, thresholdMode = mode,next_value = next_value, method = "Brent",lower = -5,upper = 5)$par
-# minimumが負の値になる場合は0にする
-if (minimum < 0) {
-minimum <- 0
-}
-threshold_value <- ((1 - log(2) / log(subgroup_len)) ^ (-0.5)) * minimum
-return(threshold_value)
+	# 偶数番目と奇数番目に分ける
+	subgroup_len = length(original_groups)
+	# minimum <- optimize(f = loss_function, interval = c(-5,5), original_group = original_groups, dt = transform_method, thresholdName = threshold_rule, thresholdMode = mode,next_value = next_value, tol = 0.00000001)$minimum
+	minimum = optim(par = 0, fn = loss_function, original_group = original_groups, dt = transform_method, thresholdName = threshold_rule, thresholdMode = mode,next_value = next_value, method = "Brent",lower = -5,upper = 5)$par
+	# minimumが負の値になる場合は0にする
+	if (minimum < 0) {
+	minimum <- 0
+	}
+	threshold_value <- ((1 - log(2) / log(subgroup_len)) ^ (-0.5)) * minimum
+	return(threshold_value)
 }
 
 loss_function <- function(t, original_group, dt, thresholdName, thresholdMode, next_value) {
-  # 偶数番目と奇数番目に分ける
+  # Separate even-numbered and odd-numbered
   odd_group <- original_group[seq(1, length(original_group), by = 2)]
   even_group <- original_group[seq(2, length(original_group), by = 2)]
 
   odd_index = log(length(odd_group), base = 2)
   even_index = log(length(even_group), base = 2)
 
-  # 偶数番目と奇数番目についてWSEを行う
+  # Perform WSE for even and odd numbers
  thresholded_odd_group <- wse(odd_group, dt, "none", thresholdMode, 1, odd_index, t)
  thresholded_even_group <- wse(even_group, dt, "none", thresholdMode, 1, even_index, t)
 
@@ -178,8 +178,6 @@ loss_function <- function(t, original_group, dt, thresholdName, thresholdMode, n
 	odd_ave_list = list()
 	even_ave_list = list()
 
-	# odd_ave_list <- numeric(length(thresholded_odd_group$idata))
-	# even_ave_list <- numeric(length(thresholded_even_group$idata))
 
 	for (i in 1:length(thresholded_odd_group$idata)) {
 	if (i != length(thresholded_odd_group$idata)) {
