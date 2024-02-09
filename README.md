@@ -7,7 +7,7 @@
 # rwseの使い方
 このリポジトリをcloneした後, 必要なパッケージをインストールしてrwse直下で`/src/WaveletTransform.R`をインポートして使用してください.
 
-詳しい使い方はrwse/examples/ExampleUsage.Rをご覧ください．
+詳しい使い方はrwse/example/ExampleUsage.Rをご覧ください．
 
 # rwseで使える各関数について
 ## loadData()
