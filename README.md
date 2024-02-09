@@ -5,7 +5,9 @@
 **rwse**(R wavelet shrinkage estimation)は，ソフトウェアフォールト発見数データから，離散型非同次ポアソン過程における強度関数を推定するプログラムです．
 
 # rwseの使い方
-このリポジトリをcloneした後, 必要なパッケージをインストールしてrwse直下で`/src/WaveletTransform.R`をインポートして使用してください. 詳しい使い方はrwse/examples/example_usage.pyをご覧ください．
+このリポジトリをcloneした後, 必要なパッケージをインストールしてrwse直下で`/src/WaveletTransform.R`をインポートして使用してください.
+
+詳しい使い方はrwse/examples/ExampleUsage.Rをご覧ください．
 
 # rwseで使える各関数について
 ## loadData()
