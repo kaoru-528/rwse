@@ -31,14 +31,14 @@ wse(
 )
 ```
 ### データ変換
-データ変換は`dt`によって指定することができます. rwseでは次の表のデータ変換が実装され, 変換式に違いがあります. すべての変換において逆変換の式に違いがあるため, 逆変換の式のみ参考程度に乗せておきます.
+データ変換は`dt`によって指定することができます. rwseでは次の表のデータ変換が実装され, 変換式に違いがあります. すべての変換において逆変換の式に違いがあるため, 逆変換の式のみ参考に載せておきます.
 | 変数名 | 変換名 | 逆変換の式 |
 | ------------- | ------------- | ------------- |
 | none  | データ変換を行わない  | 式なし |
-| A1  | Anscombe transformation 1  | $`((s_i^2)-3/2)/4`$  |
-| A2  | Anscombe transformation 2  | $`((s_i^2)-1/2)/4`$  |
+| A1  | Anscombe transformation 1  | $`(s_i^2-3/2)/4`$  |
+| A2  | Anscombe transformation 2  | $`(s_i^2-1/2)/4`$  |
 | A3  | Anscombe transformation 3  | $`(s_i^2)/4+\sqrt{3/2}/(4*s_i)-11/(8*s_i^2)+5*\sqrt{3/2}/(8*s_i^3)-1/8`$  |
-| B1  | Bartlet transformation 1  | $`((b_i^2)-2)/4`$  |
+| B1  | Bartlet transformation 1  | $`(b_i^2-2)/4`$  |
 | B2  | Bartlet transformation 2  | $`(b_i^2)/4`$  |
 | Fi  | Fisz transformation  | 複雑なため省略  |
 | Fr  | Freeman transformation |　$`((f_i^2)+(f_i^(-2))-2)/4`$　|
