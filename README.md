@@ -68,7 +68,7 @@ result
 $estimationData #推定値
 $cs #スケーリング係数
 $ds #ウェーブレット係数
-$denoiseDs #閾値処理後のウェーブレット係数
+$denoisedDs #閾値処理後のウェーブレット係数
 ```
 
 ## tipsh()
@@ -90,7 +90,7 @@ result
 $estimationData #推定値
 $cs #スケーリング係数
 $ds #ウェーブレット係数
-$denoiseDs #閾値処理後のウェーブレット係数
+$denoisedDs #閾値処理後のウェーブレット係数
 ```
 
 ## createResult()
