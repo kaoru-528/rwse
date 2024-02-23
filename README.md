@@ -35,11 +35,11 @@ wse(
 | 変数名 | 変換名 | 式 |
 | ------------- | ------------- | ------------- |
 | none  | データ変換を行わない  |
-| A1  | Anscombe transformation 1  | $`((si^2)-3/2)/4`$  |
-| A2  | Anscombe transformation 2  | $`((si/2)^2)-1/8`$  |
-| A3  | Anscombe transformation 3  | $`(si^2)/4+sqrt(3/2)/(4*si)-11/(8*(si^2))+5*sqrt(3/2)/(8*(si^3))-1/8`$  |
-| B1  | Bartlet transformation 1  | $`((bi^2)-2)/4`$  |
-| B2  | Bartlet transformation 2  | $`(bi^2)/4`$  |
+| A1  | Anscombe transformation 1  | $`((s_i^2)-3/2)/4`$  |
+| A2  | Anscombe transformation 2  | $`((s_i/2)^2)-1/8`$  |
+| A3  | Anscombe transformation 3  | $`(s_i^2)/4+\sqrt(3/2)/(4*s_i)-11/(8*(s_i^2))+5*sqrt(3/2)/(8*(s_i^3))-1/8`$  |
+| B1  | Bartlet transformation 1  | $`((b_i^2)-2)/4`$  |
+| B2  | Bartlet transformation 2  | $`(b_i^2)/4`$  |
 | Fi  | Fisz transformation  |
 | Fr  | Freeman transformation |
 
