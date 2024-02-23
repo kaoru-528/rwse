@@ -41,7 +41,7 @@ wse(
 | B1  | Bartlet transformation 1  | $`(b_i^2-2)/4`$  |
 | B2  | Bartlet transformation 2  | $`(b_i^2)/4`$  |
 | Fi  | Fisz transformation  | 複雑なため省略  |
-| Fr  | Freeman transformation |　$`((f_i^2)+(f_i^(-2))-2)/4`$　|
+| Fr  | Freeman transformation |　$`((f_i^2)+(f_i^{-2})-2)/4`$　|
 
 ### 閾値決定アルゴリズム
 閾値決定アルゴリズムは`thresholdName`によって指定することができます. rwseでは次の表の閾値決定アルゴリズムが実装されています.
