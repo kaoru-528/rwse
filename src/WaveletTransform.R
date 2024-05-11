@@ -1,18 +1,18 @@
 #Get maximum resolution
-getHighestResolutionLevel = function(groupLength)
+GetHighestResolutionLevel = function(GroupLength)
 {
-  level = log2(groupLength)
-  level = as.integer(level)
-  return(level)
+  Level = log2(GroupLength)
+  Level = as.integer(Level)
+  return(Level)
 }
 #Get a value that satisfies the largest integer power of 2 less than or equal to dataLength.
-#example：when dataLength = 62, return 32.
+#example：when DataLength = 62, return 32.
 #reason：2^5 = 32 < 62 < 64 = 2^6
-getGroupLength = function(dataLength)
+GetGroupLength = function(DataLength)
 {
   i = 1
   x = i
-  while (i <= dataLength)
+  while (i <= DataLength)
   {
     x = i
     i = i * 2
@@ -20,162 +20,160 @@ getGroupLength = function(dataLength)
   return(x)
 }
 
-#Divide data set data of arbitrary length into multiple sub-datasets according to groupLength.
-getGroups = function(data, groupLength)
+#Divide Data set Data of arbitrary length into multiple sub-datasets according to groupLength.
+GetGroups = function(Data, GroupLength)
 {
   i = 0
-  dataLength = length(data)
-  tempList = list()
-  while (groupLength + i <= dataLength)
+  DataLength = length(Data)
+  TempList = list()
+  while (GroupLength + i <= DataLength)
   {
-    tempData = data
+    TempData = Data
     a = i+1
-    b = groupLength + i
-    cutData = tempData[a : b]
-    tempList = append(tempList,list(cutData))
+    b = GroupLength + i
+    CutData = TempData[a : b]
+    TempList = append(TempList,list(CutData))
     i = i + 1
   }
-  return(tempList)
+  return(TempList)
 }
 
-#Scale coefficients of discrete Hal wavelets expanded for a set of data
-getScalingCoefficientsFromGroup = function(timeList)
+#Scale coefficients of discrete Hal wavelets expanded for a set of Data
+GetScalingCoefficientsFromGroup = function(TimeList)
 {
-  lists = list()
-  J = getHighestResolutionLevel( length(timeList) )
-  lists = append(lists, list(timeList))
+  Lists = list()
+  J = GetHighestResolutionLevel( length(TimeList))
+  Lists = append(Lists, list(TimeList))
   j = 1
   while(j <= J)
   {
-    tempList = c()
+    TempList = c()
     k = 1
     while(k <= 2**(J - j))
     {
-      coe = (1/sqrt(2))*(lists[[j]][2 * k - 1] + lists[[j]][2 * k])
-      tempList = append(tempList,coe)
+      coe = (1/sqrt(2))*(Lists[[j]][2 * k - 1] + Lists[[j]][2 * k])
+      TempList = append(TempList,coe)
       k = k + 1
     }
-    lists = append(lists, list(tempList))
+    Lists = append(Lists, list(TempList))
     j = j + 1
   }
-  return(lists)
+  return(Lists)
 }
 
-#Wavelet coefficients of discrete Hal wavelets are simultaneously expanded for multiple data sets
-getWaveletCoefficientsFromGroup = function(coeList)
+#Wavelet coefficients of discrete Hal wavelets are simultaneously expanded for multiple Data sets
+GetWaveletCoefficientsFromGroup = function(CoeList)
 {
-  lists = list()
-  J = getHighestResolutionLevel(length(coeList[[1]]) )
-  lists = append(lists, list(coeList[[1]]))
+  Lists = list()
+  J = GetHighestResolutionLevel(length(CoeList[[1]]) )
+  Lists = append(Lists, list(CoeList[[1]]))
   j = 1
   while(j <= J)
   {
-    tempList = c()
+    TempList = c()
     k = 1
     while(k <= 2**(J - j))
     {
-      c = (1/sqrt(2))*( coeList[[j]][2 * k - 1] - coeList[[j]][2 * k])
-      tempList = append(tempList,c)
+      c = (1/sqrt(2))*(CoeList[[j]][2 * k - 1] - CoeList[[j]][2 * k])
+      TempList = append(TempList,c)
       k = k + 1
     }
-    lists = append(lists,list(tempList))
+    Lists = append(Lists,list(TempList))
     j = j + 1
   }
-  return(lists)
+  return(Lists)
 }
 
-#Scale coefficients of the discrete Hal wavelet are simultaneously expanded for multiple data sets
-getScalingCoefficientsFromGroups = function(Groups)
+#Scale coefficients of the discrete Hal wavelet are simultaneously expanded for multiple Data sets
+GetScalingCoefficientsFromGroups = function(Groups)
 {
-  lists = list()
-  groupsLength = length(Groups)
+  Lists = list()
+  GroupsLength = length(Groups)
   i = 1
-  while(i <= groupsLength)
+  while(i <= GroupsLength)
   {
-    tempList = getScalingCoefficientsFromGroup(Groups[[i]])
-    lists = append(lists,list(tempList))
+    TempList = GetScalingCoefficientsFromGroup(Groups[[i]])
+    Lists = append(Lists,list(TempList))
     i = i + 1
   }
-  return(lists)
+  return(Lists)
 }
 
-#Wavelet coefficients of discrete Hal wavelets unfolded for a set of data
-getWaveletCoefficientsFromGroups = function(CS)
+#Wavelet coefficients of discrete Hal wavelets unfolded for a set of Data
+GetWaveletCoefficientsFromGroups = function(CS)
 {
-  lists = list()
-  groupsLength = length(CS)
+  Lists = list()
+  GroupsLength = length(CS)
   i = 1
-  while(i <= groupsLength)
+  while(i <= GroupsLength)
   {
-    tempList = getWaveletCoefficientsFromGroup(CS[[i]])
-    lists = append(lists,list(tempList))
+    TempList = GetWaveletCoefficientsFromGroup(CS[[i]])
+    Lists = append(Lists,list(TempList))
     i = i + 1
   }
-  return(lists)
+  return(Lists)
 }
 
-#Convert a set of Haar wavelet coefficients with Haar scale coefficients to the original data
-inverseHaarWaveletTransformForGroup = function(scalingCoe,waveletCoe)
+#Convert a set of Haar wavelet coefficients with Haar scale coefficients to the original Data
+InverseHaarWaveletTransformForGroup = function(ScalingCoefficient,WaveletCoefficient)
 {
-  groupLength = length(scalingCoe)
-  if (groupLength != length(waveletCoe))
+  GroupLength = length(ScalingCoefficient)
+  if (GroupLength != length(WaveletCoefficient))
   {
     return(FALSE)
   }
-  J = groupLength
+  J = GroupLength
   k = 0
-  j = groupLength
-  #print("inverseHaarWaveletTransformForGroup")
-  #print(scalingCoe[j])
+  j = GroupLength
   while(j > 1)
   {
     k = 1
     while(k <= 2**(J - j))
     {
-      scalingCoe[[j - 1]][2 * k - 1] = (1/sqrt(2))*(scalingCoe[[j]][k] + waveletCoe[[j]][k])
-      scalingCoe[[j - 1]][2 * k] = (1/sqrt(2))*(scalingCoe[[j]][k] - waveletCoe[[j]][k])
+      ScalingCoefficient[[j - 1]][2 * k - 1] = (1/sqrt(2))*(ScalingCoefficient[[j]][k] + WaveletCoefficient[[j]][k])
+      ScalingCoefficient[[j - 1]][2 * k] = (1/sqrt(2))*(ScalingCoefficient[[j]][k] - WaveletCoefficient[[j]][k])
       k = k + 1
     }
     j = j - 1
   }
-  return(scalingCoe[[1]])
+  return(ScalingCoefficient[[1]])
 }
 
-#Convert multiple sets of Haar wavelet coefficients with Haar scale coefficients to the original data
-inverseHaarWaveletTransformForGroups = function(scalingCoes,waveletCoes)
+#Convert multiple sets of Haar wavelet coefficients with Haar scale coefficients to the original Data
+InverseHaarWaveletTransformForGroups = function(Cs,Ds)
 {
-  groupsLength = length(scalingCoes)
-  if (groupsLength != length(waveletCoes))
+  GroupsLength = length(Cs)
+  if (GroupsLength != length(Ds))
   {
     return(FALSE)
   }
   i = 1
-  lists = list()
-  while(i <= groupsLength)
+  Lists = list()
+  while(i <= GroupsLength)
   {
-    tempList = inverseHaarWaveletTransformForGroup(scalingCoes[[i]],waveletCoes[[i]])
-    lists = append(lists,list(tempList))
+    TempList = InverseHaarWaveletTransformForGroup(Cs[[i]],Ds[[i]])
+    Lists = append(Lists,list(TempList))
     i = i + 1
   }
-  return(lists)
+  return(Lists)
 }
 
 #Average multiple sub-datasets by displacement and combine them into one set
-movingAverage = function(iGroups,dataLength)
+MovingAverage = function(ThresholdedGroups,DataLength)
 {
-  dataSum = numeric(dataLength)
-  counter = numeric(dataLength)
-  result  = numeric(dataLength)
+  dataSum = numeric(DataLength)
+  counter = numeric(DataLength)
+  Result  = numeric(DataLength)
   
-  groupsSum = length(iGroups)
-  groupLength = length(iGroups[[1]])
+  GroupsSum = length(ThresholdedGroups)
+  GroupLength = length(ThresholdedGroups[[1]])
   i = 1
-  while(i <= groupsSum)
+  while(i <= GroupsSum)
   {
     j = 1
-    while(j <= groupLength)
+    while(j <= GroupLength)
     {
-      dataSum[i + j - 1] = dataSum[i + j - 1] + iGroups[[i]][j]
+      dataSum[i + j - 1] = dataSum[i + j - 1] + ThresholdedGroups[[i]][j]
       counter[i + j - 1] = counter[i + j - 1] + 1
       j = j + 1
     }
@@ -183,14 +181,14 @@ movingAverage = function(iGroups,dataLength)
   }
 
   k = 1
-  while(k <= dataLength)
+  while(k <= DataLength)
   {
-    result[k] = dataSum[k] / counter[k]
-    if(result[k] < 0)
+    Result[k] = dataSum[k] / counter[k]
+    if(Result[k] < 0)
     {
-     result[k] = 0
+     Result[k] = 0
     }
     k = k + 1
   }
-  return(result)
+  return(Result)
 }

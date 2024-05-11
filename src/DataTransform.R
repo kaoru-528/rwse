@@ -1,106 +1,106 @@
 # -----------------------------------------------
 # Anscombe transformation
 # -----------------------------------------------
-AnscombeTransformFromGroups = function(groups,var)
+AnscombeTransformFromGroups = function(Group,Var)
 {
-    groupsLength = length(groups)
-    lists = list()
+    GroupsLength = length(Group)
+    Lists = list()
     i = 1
-    while(i <= groupsLength)
+    while(i <= GroupsLength)
     {
-        group = groups[[i]]
-        lists = append(lists, list(AnscombeTransformFromGroup(group,var)))
+        Group = Group[[i]]
+        Lists = append(Lists, list(AnscombeTransformFromGroup(Group,Var)))
         i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
-#Applying the Anscombe transformation to a data set with a variance of var after transformation
-AnscombeTransformFromGroup = function(group,var)
+#Applying the Anscombe transformation to a data set with a variance of Var after transformation
+AnscombeTransformFromGroup = function(Group,Var)
 {
     Anscombelist = c()
-    groupLength = length(group)
+    GroupLength = length(Group)
     i = 1
-    while(i <= groupLength)
+    while(i <= GroupLength)
     {
-        a = group[[i]] + 3/8
+        a = Group[[i]] + 3/8
         b = a**0.5
-        c = b * 2 * (var**0.5)
+        c = b * 2 * (Var**0.5)
         Anscombelist = append(Anscombelist, c)
         i = i + 1
     }
     return(Anscombelist)
 }
 
-#The inverse Anscombe transformation is applied to multiple data sets simultaneously, and the variance before transformation is var
-inverseAnscombeTransformFromGroups = function(AT_datas,var)
+#The inverse Anscombe transformation is applied to multiple data sets simultaneously, and the variance before transformation is Var
+InverseAnscombeTransformFromGroups = function(AnscombeData,Var)
 {
-    AT_datas = copy.deepcopy(AT_datas)
-    groupsLength = length(AT_datas)
+    AnscombeData = copy.deepcopy(AnscombeData)
+    GroupsLength = length(AnscombeData)
     i = 1
-    lists = list()
-    while(i <= groupsLength)
+    Lists = list()
+    while(i <= GroupsLength)
     {
-        lists = append(lists, list(inverseAnscombeTransformFromGroup(AT_datas[[i]],var)))
+        Lists = append(Lists, list(InverseAnscombeTransformFromGroup(AnscombeData[[i]],Var)))
         i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
-#Applying the inverse Anscombe transformation to a dataset with a variance of var before transformation
-inverseAnscombeTransformFromGroup = function(AT_data,var)
+#Applying the inverse Anscombe transformation to a dataset with a variance of Var before transformation
+InverseAnscombeTransformFromGroup = function(AnscombeData,Var)
 {
-    groupsLength = length(AT_data)
+    GroupsLength = length(AnscombeData)
     i = 1
-    lists = c()
-    while(i <= groupsLength)
+    Lists = c()
+    while(i <= GroupsLength)
     {
-        a = AT_data[[i]]
+        a = AnscombeData[[i]]
         b = a * a
-        d = (2 * (var**0.5)) ** -2
+        d = (2 * (Var**0.5)) ** -2
         c = d*b - 3/8
         c = round(c, 11)
-        lists = append(lists, c)
+        Lists = append(Lists, c)
         i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
 # -----------------------------------------
 # The inverse Anscombe transformation 2
 # ((si/2)^2)-1/8
 # -----------------------------------------
-inverseAnscombeTransform2FromGroups = function(AT_datas,var)
+InverseAnscombeTransform2FromGroups = function(AnscombeData,Var)
 {
-    AT_datas = copy.deepcopy(AT_datas)
-    groupsLength = length(AT_datas)
+    AnscombeData = copy.deepcopy(AnscombeData)
+    GroupsLength = length(AnscombeData)
     i = 1
-    lists = list()
-    while(i <= groupsLength)
+    Lists = list()
+    while(i <= GroupsLength)
     {
-            lists = append(lists, list(inverseAnscombeTransform2FromGroup(AT_datas[[i]],var)))
+            Lists = append(Lists, list(InverseAnscombeTransform2FromGroup(AnscombeData[[i]],Var)))
             i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
-#Applying the inverse Anscombe transformation 2 to a dataset with a variance of var before transformation
-inverseAnscombeTransform2FromGroup = function(AT_data,var)
+#Applying the inverse Anscombe transformation 2 to a dataset with a variance of Var before transformation
+InverseAnscombeTransform2FromGroup = function(AnscombeData,Var)
 {
-    groupsLength = length(AT_data)
+    GroupsLength = length(AnscombeData)
     i = 1
-    lists = c()
-    while(i <= groupsLength)
+    Lists = c()
+    while(i <= GroupsLength)
     {
-            a = AT_data[[i]]
+            a = AnscombeData[[i]]
             b = a * a
-            d = (2 * (var**0.5)) ** -2
+            d = (2 * (Var**0.5)) ** -2
             c = d*b - 1/8
             c = round(c, 11)
-            lists = append(lists, c)
+            Lists = append(Lists, c)
             i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
 
@@ -108,32 +108,32 @@ inverseAnscombeTransform2FromGroup = function(AT_data,var)
 # The inverse Anscombe transformation 3
 # (si^2)/4+sqrt(3/2)/(4*si)-11/(8*(si^2))+5*sqrt(3/2)/(8*(si^3))-1/8
 # -----------------------------------------
-inverseAnscombeTransform3FromGroups = function(AT_datas,var)
+InverseAnscombeTransform3FromGroups = function(AnscombeData,Var)
 {
-    AT_datas = copy.deepcopy(AT_datas)
-    groupsLength = length(AT_datas)
+    AnscombeData = copy.deepcopy(AnscombeData)
+    GroupsLength = length(AnscombeData)
     i = 1
-    lists = list()
-    while(i <= groupsLength)
+    Lists = list()
+    while(i <= GroupsLength)
     {
-            lists = append(lists, list(inverseAnscombeTransform3FromGroup(AT_datas[[i]],var)))
+            Lists = append(Lists, list(InverseAnscombeTransform3FromGroup(AnscombeData[[i]],Var)))
             i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
 
-#Applying the inverse Anscombe transformation 3 to a dataset with a variance of var before transformation
-inverseAnscombeTransform3FromGroup = function(AT_data,var)
+#Applying the inverse Anscombe transformation 3 to a dataset with a variance of Var before transformation
+InverseAnscombeTransform3FromGroup = function(AnscombeData,Var)
 {
-    groupsLength = length(AT_data)
+    GroupsLength = length(AnscombeData)
     i = 1
-    lists = c()
-    while(i <= groupsLength)
+    Lists = c()
+    while(i <= GroupsLength)
     {
-            a = AT_data[[i]]
+            a = AnscombeData[[i]]
             b = a * a
-            d = (2 * (var**0.5)) ** -2
+            d = (2 * (Var**0.5)) ** -2
             e = a**(-1)
             f = a**(-2)
             g = a**(-3)
@@ -143,110 +143,110 @@ inverseAnscombeTransform3FromGroup = function(AT_data,var)
                     c=0
             }
             c = round(c, 11)
-            lists = append(lists, c)
+            Lists = append(Lists, c)
             i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
 # -----------------------------------------------
 # Bartlet
 # -----------------------------------------------
-BartlettTransformFromGroups = function(groups,var)
+BartlettTransformFromGroups = function(Group,Var)
 {
-    groupsLength = length(groups)
-    lists = list()
+    GroupsLength = length(Group)
+    Lists = list()
     i = 1
-    while(i <= groupsLength)
+    while(i <= GroupsLength)
     {
-        lists = append(lists, list(BartlettTransformFromGroup(groups[[i]],var)))
+        Lists = append(Lists, list(BartlettTransformFromGroup(Group[[i]],Var)))
         i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
-#Applying a Bartlett transformation to a data set with a variance of var after transformation
-BartlettTransformFromGroup = function(group,var)
+#Applying a Bartlett transformation to a data set with a variance of Var after transformation
+BartlettTransformFromGroup = function(Group,Var)
 {
-    lists = c()
-    groupLength = length(group)
+    Lists = c()
+    GroupLength = length(Group)
     i = 1
-    while(i <= groupLength)
+    while(i <= GroupLength)
     {
-        a = group[[i]] + 0.5
+        a = Group[[i]] + 0.5
         b = a**0.5
-        c = b * 2 * (var**0.5)
-        lists = append(lists, c)
+        c = b * 2 * (Var**0.5)
+        Lists = append(Lists, c)
         i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
-#The inverse Bartlett transformation is applied simultaneously to multiple data sets, and the variance before transformation is var
-inverseBartlettTransformFromGroups = function(groups,var)
+#The inverse Bartlett transformation is applied simultaneously to multiple data sets, and the variance before transformation is Var
+InverseBartlettTransformFromGroups = function(Group,Var)
 {
-    groupsLength = length(groups)
-    lists = list()
+    GroupsLength = length(Group)
+    Lists = list()
     i = 1
-    while(i <= groupsLength)
+    while(i <= GroupsLength)
     {
-        lists = append(lists, list(inverseBartlettTransformFromGroup(groups[[i]],var)))
+        Lists = append(Lists, list(InverseBartlettTransformFromGroup(Group[[i]],Var)))
         i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
-#Applying an inverse Bartlett transformation to a dataset with a pre-transformation variance of var
-inverseBartlettTransformFromGroup = function(BT_data,var)
+#Applying an inverse Bartlett transformation to a dataset with a pre-transformation variance of Var
+InverseBartlettTransformFromGroup = function(BartlettData,Var)
 {
-    groupsLength = length(BT_data)
+    GroupsLength = length(BartlettData)
     i = 1
-    lists = c()
-    while(i <= groupsLength)
+    Lists = c()
+    while(i <= GroupsLength)
     {
-        a = BT_data[[i]] * BT_data[[i]]
-        b = (2 * (var**0.5)) ** -2
+        a = BartlettData[[i]] * BartlettData[[i]]
+        b = (2 * (Var**0.5)) ** -2
         c = b*a - 0.5
         c = round(c, 11)
-        lists = append(lists, c)
+        Lists = append(Lists, c)
         i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
 # -----------------------------------------------
 # Applying Bartlett transformation 2
 # bi=2*sqrt(yi)
 # -----------------------------------------------
-BartlettTransform2FromGroups = function(groups,var)
+BartlettTransform2FromGroups = function(Group,Var)
 {
-    groupsLength = length(groups)
-    lists = list()
+    GroupsLength = length(Group)
+    Lists = list()
     i = 1
-    while(i <= groupsLength)
+    while(i <= GroupsLength)
     {
-            lists = append(lists, list(BartlettTransform2FromGroup(groups[[i]],var)))
+            Lists = append(Lists, list(BartlettTransform2FromGroup(Group[[i]],Var)))
             i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
 
-#Applying a Bartlett transformation 2 to a data set with a variance of var after transformation
-BartlettTransform2FromGroup = function(group,var)
+#Applying a Bartlett transformation 2 to a data set with a variance of Var after transformation
+BartlettTransform2FromGroup = function(Group,Var)
 {
-    lists = c()
-    groupLength = length(group)
+    Lists = c()
+    GroupLength = length(Group)
     i = 1
-    while(i <= groupLength)
+    while(i <= GroupLength)
     {
-            a = group[[i]]
+            a = Group[[i]]
             b = a**0.5
-            c = b * 2 * (var**0.5)
-            lists = append(lists, c)
+            c = b * 2 * (Var**0.5)
+            Lists = append(Lists, c)
             i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
 
@@ -254,160 +254,160 @@ BartlettTransform2FromGroup = function(group,var)
 # The inverse Bartlett transformation 2
 # (bi^2)/4
 # -----------------------------------------------
-inverseBartlettTransform2FromGroups = function(groups,var)
+InverseBartlettTransform2FromGroups = function(Group,Var)
 {
-    groupsLength = length(groups)
-    lists = list()
+    GroupsLength = length(Group)
+    Lists = list()
     i = 1
-    while(i <= groupsLength)
+    while(i <= GroupsLength)
     {
-            lists = append(lists, list(inverseBartlettTransform2FromGroup(groups[[i]],var)))
+            Lists = append(Lists, list(InverseBartlettTransform2FromGroup(Group[[i]],Var)))
             i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
 
-#Applying an inverse Bartlett transformation 2 to a dataset with a pre-transformation variance of var
-inverseBartlettTransform2FromGroup = function(BT_data,var)
+#Applying an inverse Bartlett transformation 2 to a dataset with a pre-transformation variance of Var
+InverseBartlettTransform2FromGroup = function(BartlettData,Var)
 {
-    groupsLength = length(BT_data)
+    GroupsLength = length(BartlettData)
     i = 1
-    lists = c()
-    while(i <= groupsLength)
+    Lists = c()
+    while(i <= GroupsLength)
     {
-            a = BT_data[[i]] * BT_data[[i]]
-            b = (2 * (var**0.5)) ** -2
+            a = BartlettData[[i]] * BartlettData[[i]]
+            b = (2 * (Var**0.5)) ** -2
             c = b*a
             c = round(c, 11)
-            lists = append(lists, c)
+            Lists = append(Lists, c)
             i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
 
 # -----------------------------------------------
 # Fisz
 # -----------------------------------------------
-FiszTransformFromGroups = function(scalingCoes,waveletCoes,var)
+FiszTransformFromGroups = function(ScalingCoefficients,WaveletCoefficients,Var)
 {
-    groupsLength = length(scalingCoes)
-    lists = list()
+    GroupsLength = length(ScalingCoefficients)
+    Lists = list()
     i = 1
-    while(i <= groupsLength)
+    while(i <= GroupsLength)
     {
-        lists = append(lists, list(FiszTransformFromGroup(scalingCoes[[i]],waveletCoes[[i]],var)))
+        Lists = append(Lists, list(FiszTransformFromGroup(ScalingCoefficients[[i]],WaveletCoefficients[[i]],Var)))
         i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
-#Applying the Fisz transformation to a data set, the variance after transformation is var
-FiszTransformFromGroup = function(scalingCoe,waveletCoe,var)
+#Applying the Fisz transformation to a data set, the variance after transformation is Var
+FiszTransformFromGroup = function(ScalingcCoefficient,waveletCoe,Var)
 {
-    lists = list()
-    groupLength = length(scalingCoe)
+    Lists = list()
+    GroupLength = length(ScalingcCoefficient)
     j = 1
-    while(j <= groupLength)
+    while(j <= GroupLength)
     {
         i = 1
-        levelLength = length(scalingCoe[[j]])
+        levelLength = length(ScalingcCoefficient[[j]])
         coeList = c()
         while(i <= levelLength)
         {
-            if(scalingCoe[[j]][i] == 0)
+            if(ScalingcCoefficient[[j]][i] == 0)
             {
                 coeList = append(coeList, 0.0)
             }
             else
             {
-                if(scalingCoe[[j]][i] < 0)
+                if(ScalingcCoefficient[[j]][i] < 0)
                 {
                     print("FiszTransformFromGroup")
                 }
-                coeList = append(coeList, (var**0.5) * waveletCoe[[j]][[i]]/(scalingCoe[[j]][i]**0.5))
+                coeList = append(coeList, (Var**0.5) * waveletCoe[[j]][[i]]/(ScalingcCoefficient[[j]][i]**0.5))
             }
             i = i + 1
         }
-        lists = append(lists, list(coeList))
+        Lists = append(Lists, list(coeList))
         j = j + 1
     }
-    return(lists)
+    return(Lists)
 }
 
-#The inverse Fisz transformation is applied simultaneously to multiple data sets, and the variance before transformation is var
-inverseFiszTransformFromGroups = function(scalingCoes,FiszCoes,var)
+#The inverse Fisz transformation is applied simultaneously to multiple data sets, and the variance before transformation is Var
+InverseFiszTransformFromGroups = function(ScalingCoefficients,FiszCoes,Var)
 {
-    groupsLength = length(scalingCoes)
-    C_list = list()
-    D_list = list()
-    lists = list()
+    GroupsLength = length(ScalingCoefficients)
+    CsList = list()
+    DsList = list()
+    Lists = list()
     i = 1
-    while(i <= groupsLength)
+    while(i <= GroupsLength)
     {
-        a = inverseFiszTransformFromGroup(scalingCoes[[i]],FiszCoes[[i]],var)
-        C_list = append(C_list, list(a[[1]]))
-        D_list = append(D_list, list(a[[2]]))
+        a = InverseFiszTransformFromGroup(ScalingCoefficients[[i]],FiszCoes[[i]],Var)
+        CsList = append(CsList, list(a[[1]]))
+        DsList = append(DsList, list(a[[2]]))
         i = i + 1
     }
 
-    lists = append(lists, list(C_list))
-    lists = append(lists, list(D_list))
-    return(lists)
+    Lists = append(Lists, list(CsList))
+    Lists = append(Lists, list(DsList))
+    return(Lists)
 }
 
-#Apply the Fisz transformation to a data set with a variance of var before transformation
-inverseFiszTransformFromGroup = function(scalingCoe,FiszCoe,var)
+#Apply the Fisz transformation to a data set with a variance of Var before transformation
+InverseFiszTransformFromGroup = function(ScalingcCoefficient,FiszCoefficient,Var)
 {
-    lists = list()
-    C_lists = list()
-    D_lists = list()
-    groupLength = length(scalingCoe)
-    j = groupLength
+    Lists = list()
+    CsLists = list()
+    DsLists = list()
+    GroupLength = length(ScalingcCoefficient)
+    j = GroupLength
     while(j > 0)
     {
-        levelLength = length(scalingCoe[[j]])
-        D_list = c()
+        levelLength = length(ScalingcCoefficient[[j]])
+        DsList = c()
         i = 1
         while(i <= levelLength)
         {
-            D_list = append(D_list, Fisz_getD(scalingCoe[[j]][i],FiszCoe[[j]][i],var))
+            DsList = append(DsList, FiszGetDs(ScalingcCoefficient[[j]][i],FiszCoefficient[[j]][i],Var))
             i = i + 1
         }
         i = 1
         while(i <= levelLength && j > 1)
         {
-            scalingCoe[[j - 1]][2 * i - 1]     = scalingCoe[[j]][i] + D_list[i];
-            scalingCoe[[j - 1]][2 * i] = scalingCoe[[j]][i] - D_list[i];
-            if(scalingCoe[[j - 1]][2 * i - 1] < 0)
+            ScalingcCoefficient[[j - 1]][2 * i - 1]     = ScalingcCoefficient[[j]][i] + DsList[i];
+            ScalingcCoefficient[[j - 1]][2 * i] = ScalingcCoefficient[[j]][i] - DsList[i];
+            if(ScalingcCoefficient[[j - 1]][2 * i - 1] < 0)
             {
-                scalingCoe[[j - 1]][2 * i - 1] = 0
+                ScalingcCoefficient[[j - 1]][2 * i - 1] = 0
             }
-            if(scalingCoe[[j - 1]][2 * i] < 0)
+            if(ScalingcCoefficient[[j - 1]][2 * i] < 0)
             {
-                scalingCoe[[j - 1]][2 * i] = 0
+                ScalingcCoefficient[[j - 1]][2 * i] = 0
             }
             i = i + 1;
         }
-        D_lists = append(D_lists, list(D_list))
+        DsLists = append(DsLists, list(DsList))
         j = j - 1
     }
-    D_listx = list()
-    i = groupLength;
+    DsListx = list()
+    i = GroupLength;
     while(i >= 1)
     {
-        D_listx = append(D_listx, list(D_lists[[i]]))
+        DsListx = append(DsListx, list(DsLists[[i]]))
         i = i - 1;
     }
-    lists = append(lists, list(scalingCoe))
-    lists = append(lists, list(D_listx))
-    return( lists)
+    Lists = append(Lists, list(ScalingcCoefficient))
+    Lists = append(Lists, list(DsListx))
+    return( Lists)
 }
 #Wavelet coefficients in Poisson space are calculated from scale coefficients and wavelet coefficients in Gaussian space
-Fisz_getD = function(c,f,var)
+FiszGetDs = function(c,f,Var)
 {
-    f = f/(var ** 0.5)
+    f = f/(Var ** 0.5)
     res = f*(c**0.5)
     res = round(res, 11)
     return(res)
@@ -416,68 +416,68 @@ Fisz_getD = function(c,f,var)
 # -----------------------------------------------
 # Freeman
 # -----------------------------------------------
-FreemanTransformFromGroups = function(groups,var)
+FreemanTransformFromGroups = function(Group,Var)
 {
-    groupsLength = length(groups)
-    lists = list()
+    GroupsLength = length(Group)
+    Lists = list()
     i = 1
-    while(i <= groupsLength)
+    while(i <= GroupsLength)
     {
-            lists = append(lists, list(FreemanTransformFromGroup(groups[[i]],var)))
+            Lists = append(Lists, list(FreemanTransformFromGroup(Group[[i]],Var)))
             i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
-#Applying a Freeman transformation to a data set with a variance of var after transformation
-FreemanTransformFromGroup = function(group,var)
+#Applying a Freeman transformation to a data set with a variance of Var after transformation
+FreemanTransformFromGroup = function(Group,Var)
 {
-    lists = c()
-    groupLength = length(group)
+    Lists = c()
+    GroupLength = length(Group)
     i = 1
-    while(i <= groupLength)
+    while(i <= GroupLength)
     {
-            a = group[[i]] + 1
+            a = Group[[i]] + 1
             b = a**0.5
-            d = group[[i]]
+            d = Group[[i]]
             e = d**0.5
-            c = b * (var**0.5) + e * (var**0.5)
-            lists = append(lists, c)
+            c = b * (Var**0.5) + e * (Var**0.5)
+            Lists = append(Lists, c)
             i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
-#The inverse Freeman transformation is applied simultaneously to multiple data sets, and the variance before transformation is var
-inverseFreemanTransformFromGroups = function(groups,var)
+#The inverse Freeman transformation is applied simultaneously to multiple data sets, and the variance before transformation is Var
+InverseFreemanTransformFromGroups = function(Group,Var)
 {
-    groupsLength = length(groups)
-    lists = list()
+    GroupsLength = length(Group)
+    Lists = list()
     i = 1
-    while(i <= groupsLength)
+    while(i <= GroupsLength)
     {
-            lists = append(lists, list(inverseFreemanTransformFromGroup(groups[[i]],var)))
+            Lists = append(Lists, list(InverseFreemanTransformFromGroup(Group[[i]],Var)))
             i = i + 1
     }
-    return(lists)
+    return(Lists)
 }
 
-#Applying an inverse Freeman transformation to a dataset with a pre-transformation variance of var
-inverseFreemanTransformFromGroup = function(FT_data,var)
+#Applying an inverse Freeman transformation to a dataset with a pre-transformation variance of Var
+InverseFreemanTransformFromGroup = function(FrTransformData,Var)
 {
-    groupsLength = length(FT_data)
+    GroupsLength = length(FrTransformData)
     i = 1
-    lists = c()
-    while(i <= groupsLength)
+    Lists = c()
+    while(i <= GroupsLength)
     {
-            a = FT_data[[i]] * FT_data[[i]]
-            b = (2 * (var**0.5)) ** -2
+            a = FrTransformData[[i]] * FrTransformData[[i]]
+            b = (2 * (Var**0.5)) ** -2
             d = a**(-1)
             e = b**(-1)
             c = b*a +e*d - 0.5
             c = round(c, 11)
-            lists = append(lists, c)
+            Lists = append(Lists, c)
             i = i + 1
     }
-    return(lists)
+    return(Lists)
 }

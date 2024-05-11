@@ -1,249 +1,233 @@
 # Load wavelet conversion module
-WaveletTransform_Path = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/src/WaveletTransform.R")
-source(WaveletTransform_Path)
+WaveletTransformPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/src/WaveletTransform.R")
+source(WaveletTransformPath)
 # Load data conversion module
-DT_Path = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/src/DataTransform.R")
+DtPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/src/DataTransform.R")
 source(DT_Path)
 # Load Threshold Module
-Threshold_Path = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/src/Threshold.R")
-source(Threshold_Path)
+ThresholdPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/src/Threshold.R")
+source(ThresholdPath)
 # Load Evaluation Module
-Evaluation_Path = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/src/EvaluationIndex.R")
-source(Evaluation_Path)
+EvaluationPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/src/EvaluationIndex.R")
+source(EvaluationPath)
 
 # Hal wavelet estimation without data transformation
-wse = function(data, dt, thresholdName, thresholdMode, var, index, initThresholdvalue)
+Wse = function(Data, DataTransform, ThresholdName, ThresholdMode, Var, Index, InitThresholdvalue)
 {
-  if(dt == "none" && thresholdName != "ldt"){
-    print("Please chack the parameter. If you want to use dt=none, please set thresholdName=ldt.")
+  if(DataTransform == "none" && ThresholdName != "ldt"){
+    print("Please chack the parameter. If you want to use DataTransform=none, please set ThresholdName=ldt.")
   }
-  else if(dt != "none" && thresholdName == "ldt"){
-    print("Please chack the parameter. If you want to use thresholdName=ldt, please set dt=none.")
+  else if(DataTransform != "none" && ThresholdName == "ldt"){
+    print("Please chack the parameter. If you want to use ThresholdName=ldt, please set DataTransform=none.")
   }
   else{
-    groupLength = 2^index
+    GroupLength = 2^Index
     # Get data length
-    dataLength = length(data)
-    if(groupLength >= getGroupLength(dataLength)){
+    DataLength = length(Data)
+    if(GroupLength >= GetGroupLength(DataLength)){
       # Get subdata length
-      groupLength = getGroupLength(dataLength)
+      GroupLength = GetGroupLength(DataLength)
     }
 
     # Cut the original data into a number of sub-data of length 2^J
-    groups = getGroups(data,groupLength)
+    Groups = GetGroups(Data,GroupLength)
 
-    if(dt == "Fi"){
+    if(DataTransform == "Fi"){
       # Transform the sub-data into Gaussian data by Fisz transformation
-      Cs1  = getScalingCoefficientsFromGroups(groups)
-      Ds1  = getWaveletCoefficientsFromGroups(Cs1)
-      Fi1  = FiszTransformFromGroups(Cs1,Ds1,var)
-      fiszGroups = inverseHaarWaveletTransformForGroups(Cs1,Fi1)
+      Cs1  = GetScalingCoefficientsFromGroups(Groups)
+      Ds1  = GetWaveletCoefficientsFromGroups(Cs1)
+      Fi1  = FiszTransformFromGroups(Cs1,Ds1,Var)
+      FiszGroups = InverseHaarWaveletTransformForGroups(Cs1,Fi1)
 
-      fiszGroups = lapply(fiszGroups, function(x) x/groupLength**0.5)
+      FiszGroups = lapply(FiszGroups, function(x) x/GroupLength**0.5)
       
       # Calculate c
-      Cs2  = getScalingCoefficientsFromGroups(fiszGroups)
+      Cs2  = GetScalingCoefficientsFromGroups(FiszGroups)
       #Calculate d
-      Ds2  = getWaveletCoefficientsFromGroups(Cs2)
+      Ds2  = GetWaveletCoefficientsFromGroups(Cs2)
       
-      # Noise reduction of wavelet coefficients using thresholdMode noise reduction rule, thresholdName threshold
-      Denoise_Ds2 = ThresholdForGroups(Ds2,thresholdMode,thresholdName)
+      # Noise reduction of wavelet coefficients using ThresholdMode noise reduction rule, ThresholdName threshold
+      DenoiseDs2 = ThresholdForGroups(Ds2,ThresholdMode,ThresholdName, DataTransform, Groups, InitThresholdvalue)
         
       # Perform inverse Fisz data conversion
-      f_igroups = inverseHaarWaveletTransformForGroups(Cs2,Denoise_Ds2)
-      Cs3  = getScalingCoefficientsFromGroups(f_igroups)
-      Fs2  = getWaveletCoefficientsFromGroups(Cs3)
-      CDs  = inverseFiszTransformFromGroups(Cs3,Fs2,var)
+      InverseGropus = InverseHaarWaveletTransformForGroups(Cs2,DenoiseDs2)
+      Cs3  = GetScalingCoefficientsFromGroups(InverseGropus)
+      Fs2  = GetWaveletCoefficientsFromGroups(Cs3)
+      CDs  = InverseFiszTransformFromGroups(Cs3,Fs2,Var)
       Cs4 = CDs[[1]]
       Ds3 = CDs[[2]]
       
       # Perform inverse wavelet conversion
-      thresholded_groups = inverseHaarWaveletTransformForGroups(Cs4,Ds3)
-      thresholded_groups = lapply(thresholded_groups, function(x) x*groupLength**0.5)
+      ThresholdedGroups = InverseHaarWaveletTransformForGroups(Cs4,Ds3)
+      ThresholdedGroups = lapply(ThresholdedGroups, function(x) x*GroupLength**0.5)
       
       # Perform moving average
-      thresholded_data= movingAverage(thresholded_groups,dataLength)
+      ThresholdedData= MovingAverage(ThresholdedGroups,DataLength)
 
-      thresholdedData = list(estimationData=thresholded_data, cs=Cs4,ds=Ds3, denoiseDs=Denoise_Ds2)
+      Result = list(EstimationData=ThresholdedData, Cs=Cs4,Ds=Ds3, denoiseDs=DenoiseDs2)
     }
     else{
-      if(dt == "A1" || dt == "A2"|| dt == "A3"){
+      if(DataTransform == "A1" || DataTransform == "A2"|| DataTransform == "A3"){
         #Transform sub-data to Gaussian data by Anscombe
-        groups = AnscombeTransformFromGroups(groups,var)
+        Groups = AnscombeTransformFromGroups(Groups,Var)
       }
-      else if(dt == "B1"){
+      else if(DataTransform == "B1"){
         #Transform sub-data to Gaussian data by Bartlet
-        groups = BartlettTransformFromGroups(groups,var)
+        Groups = BartlettTransformFromGroups(Groups,Var)
       }
-      else if(dt == "B2"){
+      else if(DataTransform == "B2"){
         #Transform sub-data to Gaussian data by Bartlet
-        groups = BartlettTransform2FromGroups(groups,var)
+        Groups = BartlettTransform2FromGroups(Groups,Var)
       }
-      else if (dt == "Fr") {
-        groups = FreemanTransformFromGroups(groups,var)
+      else if (DataTransform == "Fr") {
+        Groups = FreemanTransformFromGroups(Groups,Var)
       }
       else{
-        groups = groups
+        Groups = Groups
       }
-      groups = lapply(groups, function(x) x/(groupLength**0.5))
+      Groups = lapply(Groups, function(x) x/(GroupLength**0.5))
 
       # Calculate c
-      Cs = getScalingCoefficientsFromGroups(groups)
+      Cs = GetScalingCoefficientsFromGroups(Groups)
       #Calculate d
-      Ds = getWaveletCoefficientsFromGroups(Cs)
+      Ds = GetWaveletCoefficientsFromGroups(Cs)
 
-      Denoise_Ds = ThresholdForGroups(Ds,thresholdMode,thresholdName, dt, groups, initThresholdvalue)
+      DenoisedDs = ThresholdForGroups(Ds,ThresholdMode,ThresholdName, DataTransform, Groups, InitThresholdvalue)
       # Perform inverse wavelet conversion
-      thresholded_groups = inverseHaarWaveletTransformForGroups(Cs,Denoise_Ds)
-      thresholded_groups = lapply(thresholded_groups, function(x) x*groupLength**0.5)
+      ThresholdedGroups = InverseHaarWaveletTransformForGroups(Cs,DenoisedDs)
+      ThresholdedGroups = lapply(ThresholdedGroups, function(x) x*GroupLength**0.5)
 
       # Perform moving average
-      if(thresholdName == "none"){
-        thresholded_data = thresholded_groups
+      if(ThresholdName == "none"){
+        ThresholdedData = ThresholdedGroups
       }
       else {
-        thresholded_data = movingAverage(thresholded_groups,dataLength)
+        ThresholdedData = MovingAverage(ThresholdedGroups,DataLength)
       }
 
-      if(dt == "A1"){
+      if(DataTransform == "A1"){
       # Perform inverse Anscombe data conversion
-      thresholded_data = inverseAnscombeTransformFromGroup(thresholded_data,var);
+      ThresholdedData = InverseAnscombeTransformFromGroup(ThresholdedData,Var);
       }
-      else if(dt == "A2"){
+      else if(DataTransform == "A2"){
         # Perform inverse Anscombe data conversion
-        thresholded_data = inverseAnscombeTransform2FromGroup(thresholded_data,var);
+        ThresholdedData = InverseAnscombeTransform2FromGroup(ThresholdedData,Var);
       }
-      else if(dt == "A3"){
+      else if(DataTransform == "A3"){
         # Perform inverse Anscombe data conversion
-        thresholded_data = inverseAnscombeTransform3FromGroup(thresholded_data,var);
+        ThresholdedData = InverseAnscombeTransform3FromGroup(ThresholdedData,Var);
       }
-      else if(dt == "B1"){
+      else if(DataTransform == "B1"){
         # Perform inverse Anscombe data conversion
-        thresholded_data = inverseBartlettTransformFromGroup(thresholded_data,var);
+        ThresholdedData = InverseBartlettTransformFromGroup(ThresholdedData,Var);
       }
-      else if(dt == "B2"){
+      else if(DataTransform == "B2"){
         # Perform inverse Anscombe data conversion
-        thresholded_data = inverseBartlettTransform2FromGroup(thresholded_data,var);
+        ThresholdedData = InverseBartlettTransform2FromGroup(ThresholdedData,Var);
       }
-      else if (dt == "Fr") {
-        thresholded_data = inverseFreemanTransformFromGroup(thresholded_data,var)
+      else if (DataTransform == "Fr") {
+        ThresholdedData = InverseFreemanTransformFromGroup(ThresholdedData,Var)
       }
       else{
-        thresholded_data = thresholded_data
+        ThresholdedData = ThresholdedData
       }
-      thresholdedData = list(estimationData=thresholded_data, cs=Cs,ds=Ds, denoisedDs=Denoise_Ds)
+      Result = list(EstimationData=ThresholdedData, Cs=Cs,Ds=Ds, DenoisedDs=DenoisedDs)
     }
 
-    return(thresholdedData)
+    return(Result)
   }
 }
 
 # Translation-invariant Hal wavelet estimation without data transformation
-tipsh = function(data, thresholdMode, var, index)
+Tipsh = function(Data, ThresholdMode, Var, Index)
 {
-  thresholdName = "ldt"
-  groupLength = 2^index
+  ThresholdName = "ldt"
+  GroupLength = 2^Index
   # Get data length
-  dataLength = length(data)
-  if(groupLength >= getGroupLength(dataLength)){
+  DataLength = length(Data)
+  if(GroupLength >= GetGroupLength(DataLength)){
           # Get subdata length
-          groupLength = getGroupLength(dataLength)
+          GroupLength = GetGroupLength(DataLength)
   }
   # Cut the original data into a number of sub-data of length 2^J
-  groups = getGroups(data,groupLength)
-  groups = lapply(groups, function(x) x/groupLength**0.5)
-  thresholdedGroups = list()
+  Groups = GetGroups(Data,GroupLength)
+  Groups = lapply(Groups, function(x) x/GroupLength**0.5)
+  ThresholdedGroups = list()
   #Transration-Invariant Denoising
-  for(i in 1:(dataLength-groupLength+1)){
-          templist=groups[[i]]
+  for(i in 1:(DataLength-GroupLength+1)){
+          templist=Groups[[i]]
           shiftgroup=list()
-          lists=list()
-          for(h in 1:(groupLength-1)){
-                  shiftgroup = list(c(templist[(h+1):groupLength],templist[1:h]))
+          Lists=list()
+          for(h in 1:(GroupLength-1)){
+                  shiftgroup = list(c(templist[(h+1):GroupLength],templist[1:h]))
                   Cs = getScalingCoefficientsFromGroup(as.numeric(shiftgroup[[1]]))
                   Ds = getWaveletCoefficientsFromGroup(Cs)
-                  Denoise_Ds = ThresholdForGroup(Ds,thresholdMode,thresholdName)
-                  thresholded_group = inverseHaarWaveletTransformForGroup(Cs,Denoise_Ds)
-                  lists = append(lists,list(thresholded_group))
+                  DenoisedDs = ThresholdForGroup(Ds,ThresholdMode,ThresholdName)
+                  ThresholdedGroup = inverseHaarWaveletTransformForGroup(Cs,DenoisedDs)
+                  Lists = append(Lists,list(ThresholdedGroup))
           }
           Cs=getScalingCoefficientsFromGroup(templist)
           DS=getWaveletCoefficientsFromGroup(Cs)
-          Denoise_Ds = ThresholdForGroup(Ds,thresholdMode,thresholdName)
-          thresholded_group = inverseHaarWaveletTransformForGroup(Cs,Denoise_Ds)
-          lists = append(lists,list(thresholded_group))
-          for(h in 1:(groupLength-1)){
-                  templist=lists[[h]]
-                  lists[h]=list(c(templist[(groupLength-h+1):(groupLength)],templist[1:(groupLength-h)]))
+          DenoisedDs = ThresholdForGroup(Ds,ThresholdMode,ThresholdName)
+          ThresholdedGroup = inverseHaarWaveletTransformForGroup(Cs,DenoisedDs)
+          Lists = append(Lists,list(ThresholdedGroup))
+          for(h in 1:(GroupLength-1)){
+                  templist=Lists[[h]]
+                  Lists[h]=list(c(templist[(GroupLength-h+1):(GroupLength)],templist[1:(GroupLength-h)]))
           }
-          sumlist=c()
-          for(j in 1:groupLength){
+          SumList=c()
+          for(j in 1:GroupLength){
                   sl=0
-                  for(k in 1:groupLength){
-                          sl=sl+lists[[k]][j]
+                  for(k in 1:GroupLength){
+                          sl=sl+Lists[[k]][j]
                   }
-                  sumlist = c(sumlist,sl)
+                  SumList = c(SumList,sl)
           }
-          thresholdedGroups[[i]]=(sumlist/groupLength)
+          ThresholdedGroups[[i]]=(SumList/GroupLength)
   }
   
-  thresholdedGroups = lapply(thresholdedGroups, function(x) x*groupLength**0.5)
+  ThresholdedGroups = lapply(ThresholdedGroups, function(x) x*GroupLength**0.5)
   
   # Perform moving average
-  thresholdedData = movingAverage(thresholdedGroups,dataLength)
-  thresholdedData = list(estimationData=thresholdedData, cs=Cs,ds=Ds, denoisedDs=Denoise_Ds)
+  Result = MovingAverage(ThresholdedGroups,DataLength)
+  Result = list(EstimationData=Result, Cs=Cs,Ds=Ds, DenoisedDs=DenoisedDs)
   
   # Return Results
-  return(thresholdedData)
-}
-
-# cumulative function
-toCulData = function(data)
-{
-  culData = c()
-  oldValue = 0
-  index = 1
-  while(index <= length(data))
-  {
-    nowValue = data[[index]] + oldValue
-    culData = append(culData,nowValue)
-    oldValue = nowValue
-    index = index + 1
-  }
-  return(culData)
+  return(Result)
 }
 
 # Load data from file
-loadData = function(dataPath)
+LoadData = function(DataPath)
 {
-  dataPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),dataPath)
-  ds = read.table(dataPath)[2]
-  ds = as.numeric(ds$V2)
-  return(ds)
+  DataPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),DataPath)
+  Ds = read.table(DataPath)[2]
+  Ds = as.numeric(Ds$V2)
+  return(Ds)
 }
 
 
 # creating file format
-createFile = function(i, resultPath, time)
+CreateFile = function(i, ResultPath, time)
 {
-    file_name_edata = paste0(time,"_edata_J=",i  ,".csv")
-    file_name_coe = paste0(time,"_coe_J=",i  ,".csv")
-    file_name_variable = paste0(time,"_var_J=",i  ,".RData")
-    edata = paste0(resultPath, file_name_edata)
-    coe = paste0(resultPath, file_name_coe)
-    variable = paste0(resultPath, file_name_variable)
-    file_path = list(edata = edata, coe = coe, variable = variable)
-    return(file_path)
+    FileNameEstimationData = paste0(time,"_EstimationData_J=",i  ,".csv")
+    FileNameCoefficients = paste0(time,"_Coefficients_J=",i  ,".csv")
+    FileNameVariable = paste0(time,"_Variable_J=",i  ,".RData")
+    EstimationData = paste0(ResultPath, FileNameEstimationData)
+    Coefficients = paste0(ResultPath, FileNameCoefficients)
+    Variable = paste0(ResultPath, FileNameVariable)
+    FilePath = list(EstimationData = EstimationData, Coefficients = Coefficients, Variable = Variable)
+    return(FilePath)
 }
 
 # creating result
-createResult = function(hard, soft, index, resultPath){
+CreateResult = function(Hard, Soft, Index, ResultPath){
   time = Sys.time() %>% format("%H-%M-%S")
-  edata = list(hard = round(hard$estimationData, digits = 3), soft = round(soft$estimationData, digits = 3))
-  hard_coe= rbind("Cs",as.data.frame(t(sapply(hard$Cs, unlist))),"Ds",as.data.frame(t(sapply(hard$Ds, unlist))),"Denoise_Ds",as.data.frame(t(sapply(hard$Denoise_Ds, unlist))))
-  soft_coe= rbind("Cs",as.data.frame(t(sapply(soft$Cs, unlist))),"Ds",as.data.frame(t(sapply(soft$Ds, unlist))),"Denoise_Ds",as.data.frame(t(sapply(soft$Denoise_Ds, unlist))))
-  coe = rbind("hard",hard_coe,"soft",soft_coe)
-  file_path = createFile(index, resultPath, time)
-  write.csv(edata, file_path$edata, row.names = FALSE)
-  write.csv(coe, file_path$coe, row.names = FALSE)
-  save(hard, soft, file = file_path$variable)
+  EstimationData = list(Hard = round(Hard$EstimationData, digits = 3), Soft = round(Soft$EstimationData, digits = 3))
+  hard_coe= rbind("Cs",as.data.frame(t(sapply(Hard$Cs, unlist))),"Ds",as.data.frame(t(sapply(Hard$Ds, unlist))),"DenoisedDs",as.data.frame(t(sapply(Hard$DenoisedDs, unlist))))
+  soft_coe= rbind("Cs",as.data.frame(t(sapply(Soft$Cs, unlist))),"Ds",as.data.frame(t(sapply(Soft$Ds, unlist))),"DenoisedDs",as.data.frame(t(sapply(Soft$DenoisedDs, unlist))))
+  Coefficients = rbind("Hard",hard_coe,"Soft",soft_coe)
+  FilePath = CreateFile(Index, ResultPath, time)
+  write.csv(EstimationData, FilePath$EstimationData, row.names = FALSE)
+  write.csv(Coefficients, FilePath$Coefficients, row.names = FALSE)
+  save(Hard, Soft, file = FilePath$Variable)
 }
