@@ -1,85 +1,85 @@
-ThresholdForGroups = function(Ds,mode,ThresholdName,dt,groups ,initThresholdvalue)
+ThresholdForGroups = function(Ds, ThresholdMode, ThresholdName, DataTransform, Groups , InitThresholdvalue)
 {
-	groupLength = length(Ds)
-	lists = list()
+	GroupLength = length(Ds)
+	Lists = list()
 	u = 1
-	while(u <= groupLength)
+	while(u <= GroupLength)
 	{
-		list_s = ThresholdForGroup(Ds[[u]],mode,ThresholdName,dt,groups, initThresholdvalue, u)
-		lists = append(lists, list(list_s))
+		TmpList = ThresholdForGroup(Ds[[u]],ThresholdMode,ThresholdName,DataTransform,Groups, InitThresholdvalue, u)
+		Lists = append(Lists, list(TmpList))
 		u = u + 1
 	}
-	return(lists)
+	return(Lists)
 }
 
 #Apply the soft or hard thresholding method of ThresholdName to a set of wavelet coefficients
-ThresholdForGroup = function(GroupWaveletCoefficients,mode,ThresholdName,dt,groups, initThresholdvalue,j)
+ThresholdForGroup = function(GroupWaveletCoefficients,ThresholdMode,ThresholdName,DataTransform,Groups, InitThresholdvalue,j)
 {
 	if(ThresholdName == 'ut'|| ThresholdName == 'ldt' || ThresholdName == 'lut'|| ThresholdName == 'none'){
-		dataLength = length(GroupWaveletCoefficients[[1]])
+		DataLength = length(GroupWaveletCoefficients[[1]])
 		t = 1000
 		j = 1
 		if(ThresholdName == 'ut')
 		{
-			t = getUniversalThreshold(dataLength)
+			t = GetUniversalThreshold(DataLength)
 		}
 		else if (ThresholdName == 'none') {
-		   t = initThresholdvalue
+		   t = InitThresholdvalue
 		}
-		lists = list()
-		lists = append(lists,list(GroupWaveletCoefficients[[1]]))
+		Lists = list()
+		Lists = append(Lists,list(GroupWaveletCoefficients[[1]]))
 		i = 2
-		groupLength = length(GroupWaveletCoefficients)
+		GroupLength = length(GroupWaveletCoefficients)
 
 		if(ThresholdName == 'ldt' || ThresholdName == 'lut')
 		{
 			C = getScalingCoefficientsFromGroup(GroupWaveletCoefficients[[1]])
-        	lam0 = mean(GroupWaveletCoefficients[[1]])*(dataLength**0.5)
+        	lam0 = mean(GroupWaveletCoefficients[[1]])*(DataLength**0.5)
 		}
 
-		while(i <= groupLength)
+		while(i <= GroupLength)
 		{
 			if(ThresholdName == 'ldt')
 			{
-				tempList = ldtThreshold(GroupWaveletCoefficients[[i]],mode,i,dataLength,lam0)
+				TmpList = LdtThreshold(GroupWaveletCoefficients[[i]],ThresholdMode,i,DataLength,lam0)
 			}
 			else
 			{
 				if(ThresholdName == 'lut')
 				{
 					ut_dataLength = length(C[[i]])
-					t = getUniversalThreshold(ut_dataLength)
+					t = GetUniversalThreshold(ut_dataLength)
 				}
-				tempList = ThresholdForOneLevel(GroupWaveletCoefficients[[i]],mode,t)
+				TmpList = ThresholdForOneLevel(GroupWaveletCoefficients[[i]],ThresholdMode,t)
 			}
-			lists = append(lists,list(tempList))
+			Lists = append(Lists,list(TmpList))
 			i = i + 1
 		}
 	}
 	else{
-			sub_groupLength = length(groups[[1]])
-			if(j != length(groups))
+			SubGroupLength = length(Groups[[1]])
+			if(j != length(Groups))
 			{
-				next_value = next_value = groups[[j+1]][sub_groupLength]
+				NextValue = NextValue = Groups[[j+1]][SubGroupLength]
 			}
 			else
 			{
-				next_value = next_value = groups[[1]][sub_groupLength]
+				NextValue = NextValue = Groups[[1]][SubGroupLength]
 			}
-			t = lhtThreshold(groups[[j]], dt, ThresholdName, mode, next_value)
+			t = LhtThreshold(Groups[[j]], DataTransform, ThresholdName, ThresholdMode, NextValue)
 			j = j + 1
-			lists = list()
-			lists = append(lists,list(GroupWaveletCoefficients[[1]]))
+			Lists = list()
+			Lists = append(Lists,list(GroupWaveletCoefficients[[1]]))
 			i = 2
-			groupLength = length(GroupWaveletCoefficients)
-			while(i <= groupLength)
+			GroupLength = length(GroupWaveletCoefficients)
+			while(i <= GroupLength)
 			{
-				tempList = ThresholdForOneLevel(GroupWaveletCoefficients[[i]],mode,t)
-				lists = append(lists,list(tempList))
+				TmpList = ThresholdForOneLevel(GroupWaveletCoefficients[[i]],ThresholdMode,t)
+				Lists = append(Lists,list(TmpList))
 				i = i + 1
 			}
 	}
-    return(lists)
+    return(Lists)
 }
 
 # ---------------------------------
@@ -89,9 +89,9 @@ ThresholdForGroup = function(GroupWaveletCoefficients,mode,ThresholdName,dt,grou
 # lut is applied to the length of j-th
 # level empirical wavelet coefficients.
 # ---------------------------------
-getUniversalThreshold = function(groupLength)
+GetUniversalThreshold = function(GroupLength)
 {
-	a = log(groupLength)
+	a = log(GroupLength)
 	b = 2*a
 	c = b**0.5
 	return(c)
@@ -101,131 +101,128 @@ getUniversalThreshold = function(groupLength)
 # Get ldt threshold
 # ldt:Level-dependent-Threshold
 # ---------------------------------
-getLevelDependentThreshold = function(J,now_level,mean)
+GetLevelDependentThreshold = function(J,NowLevel,Mean)
 {
-	a = 2 ** (-1 * 0.5 * (now_level+1))
-	log2j = log(2 ** (J - now_level +1))
+	a = 2 ** (-1 * 0.5 * (NowLevel+1))
+	log2j = log(2 ** (J - NowLevel +1))
 	b = 2 * log2j
 	c = 4 * (log2j) ** 2
-	d = 8 * mean * log2j
+	d = 8 * Mean * log2j
 	t = a * (b + ((c+d) ** 0.5))
 	return(t)
 }
 
 # Thresholding the wavelet coefficients of a layer at a threshold value of t
-ThresholdForOneLevel = function(WaveletCoefficients,mode,t)
+ThresholdForOneLevel = function(WaveletCoefficients,ThresholdMode,t)
 {
 	coefficientsLength = length(WaveletCoefficients)
-	tempList = c()
+	TmpList = c()
 	i = 1
 	while(i <= coefficientsLength)
 	{
-		a = Threshold(WaveletCoefficients[i],t,mode)
-		tempList = append(tempList,a)
+		Tmp = Threshold(WaveletCoefficients[i],t,ThresholdMode)
+		TmpList = append(TmpList,Tmp)
 		i = i + 1
 	}
-	return(tempList)
+	return(TmpList)
 }
 
-#Calculating ldt and thresholding the data
-ldtThreshold = function(data,mode,loop_level,dataLength,lam0)
+#Calculating ldt and thresholding the Data
+LdtThreshold = function(Data,ThresholdMode,loop_level,DataLength,lam0)
 {
 	#Highest Resolution
-	J = getHighestResolutionLevel(dataLength)
-	#Thresholding the data one by one
+	J = getHighestResolutionLevel(DataLength)
+	#Thresholding the Data one by one
 	i = 1
-	tempList = c()
-	mean = lam0/length(data)
-	while (i <= length(data))
+	TmpList = c()
+	Mean = lam0/length(Data)
+	while (i <= length(Data))
 	{
 		#Get ldt threshold
-		t = getLevelDependentThreshold(J,loop_level,mean)
+		t = GetLevelDependentThreshold(J,loop_level,Mean)
 		#Threshold processing
-		denoise_data = Threshold(data[[i]],t,mode)
-		tempList = append(tempList,denoise_data)
+		DenoisedData = Threshold(Data[[i]],t,ThresholdMode)
+		TmpList = append(TmpList,DenoisedData)
 		i = i + 1
 	}
-	return(tempList)
+	return(TmpList)
 }
 
-lhtThreshold <- function(original_groups, transform_method, threshold_rule, mode ,next_value) {
-	# 偶数番目と奇数番目に分ける
-	subgroup_len = length(original_groups)
-	# minimum <- optimize(f = loss_function, interval = c(-5,5), original_group = original_groups, dt = transform_method, thresholdName = threshold_rule, thresholdMode = mode,next_value = next_value, tol = 0.00000001)$minimum
-	minimum = optim(par = 0, fn = loss_function, original_group = original_groups, dt = transform_method, thresholdName = threshold_rule, thresholdMode = mode,next_value = next_value, method = "Brent",lower = -5,upper = 5)$par
-	# minimumが負の値になる場合は0にする
-	if (minimum < 0) {
-	minimum <- 0
+LhtThreshold = function(OriginalGroups, DataTransform, ThresholdName, ThresholdMode ,NextValue) {
+	subgroup_len = length(OriginalGroups)
+	Minimum = optim(par = 0, fn = LossFunction, OriginalGroup = OriginalGroups, DataTransform = DataTransform, ThresholdName = ThresholdName, ThresholdMode = ThresholdMode,NextValue = NextValue, method = "Brent",lower = -5,upper = 5)$par
+	if (Minimum < 0) {
+	Minimum = 0
 	}
-	threshold_value <- ((1 - log(2) / log(subgroup_len)) ^ (-0.5)) * minimum
-	return(threshold_value)
+	ThresholdValue = ((1 - log(2) / log(subgroup_len)) ^ (-0.5)) * Minimum
+	return(ThresholdValue)
 }
 
-loss_function <- function(t, original_group, dt, thresholdName, thresholdMode, next_value) {
+LossFunction = function(t, OriginalGroup, DataTransform, ThresholdName, ThresholdMode, NextValue) {
   # Separate even-numbered and odd-numbered
-  odd_group <- original_group[seq(1, length(original_group), by = 2)]
-  even_group <- original_group[seq(2, length(original_group), by = 2)]
+  OddGroup = OriginalGroup[seq(1, length(OriginalGroup), by = 2)]
+  EvenGroup = OriginalGroup[seq(2, length(OriginalGroup), by = 2)]
 
-  odd_index = log(length(odd_group), base = 2)
-  even_index = log(length(even_group), base = 2)
+  OddIndex = log(length(OddGroup), base = 2)
+  EvenIndex = log(length(EvenGroup), base = 2)
 
   # Perform WSE for even and odd numbers
- thresholded_odd_group <- wse(odd_group, dt, "none", thresholdMode, 1, odd_index, t)
- thresholded_even_group <- wse(even_group, dt, "none", thresholdMode, 1, even_index, t)
+ ThresholdedOddGroup = wse(OddGroup, DataTransform, "none", ThresholdMode, 1, OddIndex, t)
+ ThresholdedEvenGroup = wse(EvenGroup, DataTransform, "none", ThresholdMode, 1, EvenIndex, t)
 
- original_group = append(original_group,next_value)
+ OriginalGroup = append(OriginalGroup,NextValue)
 
-	odd_ave_list = list()
-	even_ave_list = list()
+	OddAverageList = list()
+	EvenAverageList = list()
 
 
-	for (i in 1:length(thresholded_odd_group$idata)) {
-	if (i != length(thresholded_odd_group$idata)) {
-		odd_ave <- (thresholded_odd_group$idata[i] + thresholded_odd_group$idata[i + 1]) * 0.5
+	for (i in 1:length(ThresholdedOddGroup$EstimationData)) {
+	if (i != length(ThresholdedOddGroup$EstimationData)) {
+		OddAverage = (ThresholdedOddGroup$EstimationData[i] + ThresholdedOddGroup$EstimationData[i + 1]) * 0.5
 	} else {
-		odd_ave <- (thresholded_odd_group$idata[i] + thresholded_odd_group$idata[1]) * 0.5
+		OddAverage = (ThresholdedOddGroup$EstimationData[i] + ThresholdedOddGroup$EstimationData[1]) * 0.5
 	}
-	odd_ave_list= c(odd_ave_list, odd_ave)
+	OddAverageList= c(OddAverageList, OddAverage)
 	}
 
-	for (i in 1:length(thresholded_even_group$idata)) {
-	if (i != length(thresholded_even_group$idata)) {
-		even_ave <- (thresholded_even_group$idata[i] + thresholded_even_group$idata[i + 1]) * 0.5
+	for (i in 1:length(ThresholdedEvenGroup$EstimationData)) {
+	if (i != length(ThresholdedEvenGroup$EstimationData)) {
+		EvenAverage = (ThresholdedEvenGroup$EstimationData[i] + ThresholdedEvenGroup$EstimationData[i + 1]) * 0.5
 	} else {
-		even_ave <- (thresholded_even_group$idata[i] + thresholded_even_group$idata[1]) * 0.5
+		EvenAverage = (ThresholdedEvenGroup$EstimationData[i] + ThresholdedEvenGroup$EstimationData[1]) * 0.5
 	}
-	even_ave_list= c(even_ave_list, even_ave)
+	EvenAverageList= c(EvenAverageList, EvenAverage)
 	}
-  squared_error <- 0
-  for (i in 1:length(thresholded_odd_group$idata)) {
-    odd_squared_error <- (odd_ave_list[[i]][1] - original_group[2 * i]) ^ 2
-    even_squared_error <- (even_ave_list[[i]][1] - original_group[2 * i + 1]) ^ 2
-    squared_error <- squared_error + odd_squared_error + even_squared_error
+  SquaredError = 0
+  for (i in 1:length(ThresholdedOddGroup$EstimationData)) {
+    OddSquaredError = (OddAverageList[[i]][1] - OriginalGroup[2 * i]) ^ 2
+    EvenSquaredError = (EvenAverageList[[i]][1] - OriginalGroup[2 * i + 1]) ^ 2
+    SquaredError = SquaredError + OddSquaredError + EvenSquaredError
   }
-  return(squared_error)
+  return(SquaredError)
 }
 
-#Thresholding of the value coe according to the threshold r
-Threshold = function(coe,r,mode)
+#Thresholding of the value Coefficient according to the threshold t
+Threshold = function(Coefficient,t,ThresholdMode)
 {
-	if(mode == 'h'){
-		if(abs(coe) <= r){
+	if(ThresholdMode == 'h'){
+		if(abs(Coefficient) <= t){
 	    return(0)
 		}
 		else{
-	    return(coe)
+	    return(Coefficient)
 		}
 	}
 	else{
-		if(abs(coe) <= r){
+		if(abs(Coefficient) <= t){
 	    return(0)
 		}
 		else{
-			if(coe > 0){
-	        	return(coe - r)
+			if(Coefficient > 0){
+	        	return(Coefficient - t)
 	    	}
 	    	else{
-	        	return(coe + r)
+	        	return(Coefficient + t)
 	    	}
 		}
 	}
