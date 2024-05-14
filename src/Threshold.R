@@ -1,11 +1,11 @@
-ThresholdForGroups = function(Ds, ThresholdMode, ThresholdName, DataTransform, Groups , InitThresholdvalue)
+ThresholdForGroups = function(Ds, ThresholdMode, ThresholdName, DataTransform, Groups , InitThresholdValue)
 {
 	GroupLength = length(Ds)
 	Lists = list()
 	u = 1
 	while(u <= GroupLength)
 	{
-		TmpList = ThresholdForGroup(Ds[[u]],ThresholdMode,ThresholdName,DataTransform,Groups, InitThresholdvalue, u)
+		TmpList = ThresholdForGroup(Ds[[u]],ThresholdMode,ThresholdName,DataTransform,Groups, InitThresholdValue, u)
 		Lists = append(Lists, list(TmpList))
 		u = u + 1
 	}
@@ -13,7 +13,7 @@ ThresholdForGroups = function(Ds, ThresholdMode, ThresholdName, DataTransform, G
 }
 
 #Apply the soft or hard thresholding method of ThresholdName to a set of wavelet coefficients
-ThresholdForGroup = function(GroupWaveletCoefficients,ThresholdMode,ThresholdName,DataTransform,Groups, InitThresholdvalue,j)
+ThresholdForGroup = function(GroupWaveletCoefficients,ThresholdMode,ThresholdName,DataTransform,Groups, InitThresholdValue,j)
 {
 	if(ThresholdName == 'ut'|| ThresholdName == 'ldt' || ThresholdName == 'lut'|| ThresholdName == 'none'){
 		DataLength = length(GroupWaveletCoefficients[[1]])
@@ -24,7 +24,7 @@ ThresholdForGroup = function(GroupWaveletCoefficients,ThresholdMode,ThresholdNam
 			t = GetUniversalThreshold(DataLength)
 		}
 		else if (ThresholdName == 'none') {
-		   t = InitThresholdvalue
+		   t = InitThresholdValue
 		}
 		Lists = list()
 		Lists = append(Lists,list(GroupWaveletCoefficients[[1]]))
@@ -33,7 +33,7 @@ ThresholdForGroup = function(GroupWaveletCoefficients,ThresholdMode,ThresholdNam
 
 		if(ThresholdName == 'ldt' || ThresholdName == 'lut')
 		{
-			C = getScalingCoefficientsFromGroup(GroupWaveletCoefficients[[1]])
+			C = GetScalingCoefficientsFromGroup(GroupWaveletCoefficients[[1]])
         	lam0 = mean(GroupWaveletCoefficients[[1]])*(DataLength**0.5)
 		}
 
@@ -131,7 +131,7 @@ ThresholdForOneLevel = function(WaveletCoefficients,ThresholdMode,t)
 LdtThreshold = function(Data,ThresholdMode,loop_level,DataLength,lam0)
 {
 	#Highest Resolution
-	J = getHighestResolutionLevel(DataLength)
+	J = GetHighestResolutionLevel(DataLength)
 	#Thresholding the Data one by one
 	i = 1
 	TmpList = c()
@@ -167,8 +167,8 @@ LossFunction = function(t, OriginalGroup, DataTransform, ThresholdName, Threshol
   EvenIndex = log(length(EvenGroup), base = 2)
 
   # Perform WSE for even and odd numbers
- ThresholdedOddGroup = wse(OddGroup, DataTransform, "none", ThresholdMode, 1, OddIndex, t)
- ThresholdedEvenGroup = wse(EvenGroup, DataTransform, "none", ThresholdMode, 1, EvenIndex, t)
+ ThresholdedOddGroup = Wse(OddGroup, DataTransform, "none", ThresholdMode, 1, OddIndex, t)
+ ThresholdedEvenGroup = Wse(EvenGroup, DataTransform, "none", ThresholdMode, 1, EvenIndex, t)
 
  OriginalGroup = append(OriginalGroup,NextValue)
 

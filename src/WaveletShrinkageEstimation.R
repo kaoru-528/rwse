@@ -3,7 +3,7 @@ WaveletTransformPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path)
 source(WaveletTransformPath)
 # Load data conversion module
 DtPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/src/DataTransform.R")
-source(DT_Path)
+source(DtPath)
 # Load Threshold Module
 ThresholdPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/src/Threshold.R")
 source(ThresholdPath)
@@ -12,7 +12,7 @@ EvaluationPath = paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/src
 source(EvaluationPath)
 
 # Hal wavelet estimation without data transformation
-Wse = function(Data, DataTransform, ThresholdName, ThresholdMode, Var, Index, InitThresholdvalue)
+Wse = function(Data, DataTransform, ThresholdName, ThresholdMode, Var, Index, InitThresholdValue)
 {
   if(DataTransform == "none" && ThresholdName != "ldt"){
     print("Please chack the parameter. If you want to use DataTransform=none, please set ThresholdName=ldt.")
@@ -47,7 +47,7 @@ Wse = function(Data, DataTransform, ThresholdName, ThresholdMode, Var, Index, In
       Ds2  = GetWaveletCoefficientsFromGroups(Cs2)
       
       # Noise reduction of wavelet coefficients using ThresholdMode noise reduction rule, ThresholdName threshold
-      DenoiseDs2 = ThresholdForGroups(Ds2,ThresholdMode,ThresholdName, DataTransform, Groups, InitThresholdvalue)
+      DenoiseDs2 = ThresholdForGroups(Ds2,ThresholdMode,ThresholdName, DataTransform, Groups, InitThresholdValue)
         
       # Perform inverse Fisz data conversion
       InverseGropus = InverseHaarWaveletTransformForGroups(Cs2,DenoiseDs2)
@@ -92,7 +92,7 @@ Wse = function(Data, DataTransform, ThresholdName, ThresholdMode, Var, Index, In
       #Calculate d
       Ds = GetWaveletCoefficientsFromGroups(Cs)
 
-      DenoisedDs = ThresholdForGroups(Ds,ThresholdMode,ThresholdName, DataTransform, Groups, InitThresholdvalue)
+      DenoisedDs = ThresholdForGroups(Ds,ThresholdMode,ThresholdName, DataTransform, Groups, InitThresholdValue)
       # Perform inverse wavelet conversion
       ThresholdedGroups = InverseHaarWaveletTransformForGroups(Cs,DenoisedDs)
       ThresholdedGroups = lapply(ThresholdedGroups, function(x) x*GroupLength**0.5)
@@ -130,6 +130,13 @@ Wse = function(Data, DataTransform, ThresholdName, ThresholdMode, Var, Index, In
       }
       else{
         ThresholdedData = ThresholdedData
+      }
+      i = 1
+      while(i < DataLength){
+        if(ThresholdedData[i] <= 0){
+          ThresholdedData[i] = 0
+        }
+        i = i + 1
       }
       Result = list(EstimationData=ThresholdedData, Cs=Cs,Ds=Ds, DenoisedDs=DenoisedDs)
     }
@@ -187,11 +194,16 @@ Tipsh = function(Data, ThresholdMode, Var, Index)
   }
   
   ThresholdedGroups = lapply(ThresholdedGroups, function(x) x*GroupLength**0.5)
-  
+
   # Perform moving average
-  Result = MovingAverage(ThresholdedGroups,DataLength)
   Result = list(EstimationData=Result, Cs=Cs,Ds=Ds, DenoisedDs=DenoisedDs)
-  
+  i = 1
+  while(i < DataLength){
+    if(Result[i] < 0){
+      Result[i] = 0
+    }
+    i = i + 1
+  }
   # Return Results
   return(Result)
 }

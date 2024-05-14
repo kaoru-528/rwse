@@ -1,29 +1,28 @@
 # -----------------------------------------------
 # Anscombe transformation
 # -----------------------------------------------
-AnscombeTransformFromGroups = function(Group,Var)
+AnscombeTransformFromGroups = function(Groups,Var)
 {
-    GroupsLength = length(Group)
+    GroupsLength = length(Groups)
     Lists = list()
     i = 1
     while(i <= GroupsLength)
     {
-        Group = Group[[i]]
-        Lists = append(Lists, list(AnscombeTransformFromGroup(Group,Var)))
+        Lists = append(Lists, list(AnscombeTransformFromGroup(Groups[[i]],Var)))
         i = i + 1
     }
     return(Lists)
 }
 
 #Applying the Anscombe transformation to a data set with a variance of Var after transformation
-AnscombeTransformFromGroup = function(Group,Var)
+AnscombeTransformFromGroup = function(Groups,Var)
 {
     Anscombelist = c()
-    GroupLength = length(Group)
+    GroupLength = length(Groups)
     i = 1
     while(i <= GroupLength)
     {
-        a = Group[[i]] + 3/8
+        a = Groups[[i]] + 3/8
         b = a**0.5
         c = b * 2 * (Var**0.5)
         Anscombelist = append(Anscombelist, c)
@@ -72,7 +71,6 @@ InverseAnscombeTransformFromGroup = function(AnscombeData,Var)
 # -----------------------------------------
 InverseAnscombeTransform2FromGroups = function(AnscombeData,Var)
 {
-    AnscombeData = copy.deepcopy(AnscombeData)
     GroupsLength = length(AnscombeData)
     i = 1
     Lists = list()
@@ -110,7 +108,6 @@ InverseAnscombeTransform2FromGroup = function(AnscombeData,Var)
 # -----------------------------------------
 InverseAnscombeTransform3FromGroups = function(AnscombeData,Var)
 {
-    AnscombeData = copy.deepcopy(AnscombeData)
     GroupsLength = length(AnscombeData)
     i = 1
     Lists = list()
@@ -124,8 +121,9 @@ InverseAnscombeTransform3FromGroups = function(AnscombeData,Var)
 
 
 #Applying the inverse Anscombe transformation 3 to a dataset with a variance of Var before transformation
-InverseAnscombeTransform3FromGroup = function(AnscombeData,Var)
+InverseAnscombeTransform3FromGroup = function(AnscombeDataList,Var)
 {
+    AnscombeData = unlist(AnscombeDataList)
     GroupsLength = length(AnscombeData)
     i = 1
     Lists = c()
@@ -138,9 +136,9 @@ InverseAnscombeTransform3FromGroup = function(AnscombeData,Var)
             f = a**(-2)
             g = a**(-3)
             c = d*b + (d**-0.5)*((3/2)**(0.5))*e - (d**-1)*11*f/2 + (d**-1.5)*5*((3/2)**(0.5))*g/4- 1/8
-            if(a<2*((3/8)**(0.5)))
+            if(a < 2*(3/8**(0.5)))
             {
-                    c=0
+                c = 0
             }
             c = round(c, 11)
             Lists = append(Lists, c)
@@ -152,28 +150,28 @@ InverseAnscombeTransform3FromGroup = function(AnscombeData,Var)
 # -----------------------------------------------
 # Bartlet
 # -----------------------------------------------
-BartlettTransformFromGroups = function(Group,Var)
+BartlettTransformFromGroups = function(Groups,Var)
 {
-    GroupsLength = length(Group)
+    GroupsLength = length(Groups)
     Lists = list()
     i = 1
     while(i <= GroupsLength)
     {
-        Lists = append(Lists, list(BartlettTransformFromGroup(Group[[i]],Var)))
+        Lists = append(Lists, list(BartlettTransformFromGroup(Groups[[i]],Var)))
         i = i + 1
     }
     return(Lists)
 }
 
 #Applying a Bartlett transformation to a data set with a variance of Var after transformation
-BartlettTransformFromGroup = function(Group,Var)
+BartlettTransformFromGroup = function(Groups,Var)
 {
     Lists = c()
-    GroupLength = length(Group)
+    GroupLength = length(Groups)
     i = 1
     while(i <= GroupLength)
     {
-        a = Group[[i]] + 0.5
+        a = Groups[[i]] + 0.5
         b = a**0.5
         c = b * 2 * (Var**0.5)
         Lists = append(Lists, c)
@@ -183,14 +181,14 @@ BartlettTransformFromGroup = function(Group,Var)
 }
 
 #The inverse Bartlett transformation is applied simultaneously to multiple data sets, and the variance before transformation is Var
-InverseBartlettTransformFromGroups = function(Group,Var)
+InverseBartlettTransformFromGroups = function(Groups,Var)
 {
-    GroupsLength = length(Group)
+    GroupsLength = length(Groups)
     Lists = list()
     i = 1
     while(i <= GroupsLength)
     {
-        Lists = append(Lists, list(InverseBartlettTransformFromGroup(Group[[i]],Var)))
+        Lists = append(Lists, list(InverseBartlettTransformFromGroup(Groups[[i]],Var)))
         i = i + 1
     }
     return(Lists)
@@ -218,14 +216,14 @@ InverseBartlettTransformFromGroup = function(BartlettData,Var)
 # Applying Bartlett transformation 2
 # bi=2*sqrt(yi)
 # -----------------------------------------------
-BartlettTransform2FromGroups = function(Group,Var)
+BartlettTransform2FromGroups = function(Groups,Var)
 {
-    GroupsLength = length(Group)
+    GroupsLength = length(Groups)
     Lists = list()
     i = 1
     while(i <= GroupsLength)
     {
-            Lists = append(Lists, list(BartlettTransform2FromGroup(Group[[i]],Var)))
+            Lists = append(Lists, list(BartlettTransform2FromGroup(Groups[[i]],Var)))
             i = i + 1
     }
     return(Lists)
@@ -233,14 +231,14 @@ BartlettTransform2FromGroups = function(Group,Var)
 
 
 #Applying a Bartlett transformation 2 to a data set with a variance of Var after transformation
-BartlettTransform2FromGroup = function(Group,Var)
+BartlettTransform2FromGroup = function(Groups,Var)
 {
     Lists = c()
-    GroupLength = length(Group)
+    GroupLength = length(Groups)
     i = 1
     while(i <= GroupLength)
     {
-            a = Group[[i]]
+            a = Groups[[i]]
             b = a**0.5
             c = b * 2 * (Var**0.5)
             Lists = append(Lists, c)
@@ -254,14 +252,14 @@ BartlettTransform2FromGroup = function(Group,Var)
 # The inverse Bartlett transformation 2
 # (bi^2)/4
 # -----------------------------------------------
-InverseBartlettTransform2FromGroups = function(Group,Var)
+InverseBartlettTransform2FromGroups = function(Groups,Var)
 {
-    GroupsLength = length(Group)
+    GroupsLength = length(Groups)
     Lists = list()
     i = 1
     while(i <= GroupsLength)
     {
-            Lists = append(Lists, list(InverseBartlettTransform2FromGroup(Group[[i]],Var)))
+            Lists = append(Lists, list(InverseBartlettTransform2FromGroup(Groups[[i]],Var)))
             i = i + 1
     }
     return(Lists)
@@ -416,30 +414,30 @@ FiszGetDs = function(c,f,Var)
 # -----------------------------------------------
 # Freeman
 # -----------------------------------------------
-FreemanTransformFromGroups = function(Group,Var)
+FreemanTransformFromGroups = function(Groups,Var)
 {
-    GroupsLength = length(Group)
+    GroupsLength = length(Groups)
     Lists = list()
     i = 1
     while(i <= GroupsLength)
     {
-            Lists = append(Lists, list(FreemanTransformFromGroup(Group[[i]],Var)))
+            Lists = append(Lists, list(FreemanTransformFromGroup(Groups[[i]],Var)))
             i = i + 1
     }
     return(Lists)
 }
 
 #Applying a Freeman transformation to a data set with a variance of Var after transformation
-FreemanTransformFromGroup = function(Group,Var)
+FreemanTransformFromGroup = function(Groups,Var)
 {
     Lists = c()
-    GroupLength = length(Group)
+    GroupLength = length(Groups)
     i = 1
     while(i <= GroupLength)
     {
-            a = Group[[i]] + 1
+            a = Groups[[i]] + 1
             b = a**0.5
-            d = Group[[i]]
+            d = Groups[[i]]
             e = d**0.5
             c = b * (Var**0.5) + e * (Var**0.5)
             Lists = append(Lists, c)
@@ -449,14 +447,14 @@ FreemanTransformFromGroup = function(Group,Var)
 }
 
 #The inverse Freeman transformation is applied simultaneously to multiple data sets, and the variance before transformation is Var
-InverseFreemanTransformFromGroups = function(Group,Var)
+InverseFreemanTransformFromGroups = function(Groups,Var)
 {
-    GroupsLength = length(Group)
+    GroupsLength = length(Groups)
     Lists = list()
     i = 1
     while(i <= GroupsLength)
     {
-            Lists = append(Lists, list(InverseFreemanTransformFromGroup(Group[[i]],Var)))
+            Lists = append(Lists, list(InverseFreemanTransformFromGroup(Groups[[i]],Var)))
             i = i + 1
     }
     return(Lists)
