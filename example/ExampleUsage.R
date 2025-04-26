@@ -1,11 +1,12 @@
 # When you use this program for the first time, you need to install the following packages.
 # install.packages("tidyverse")
-
 # Load libraries
 library(tidyverse)
-# Load Hal wavelet estimation module
-WSE_Path <- paste0(dirname(rstudioapi::getSourceEditorContext()$path), "/src/WaveletShrinkageEstimation.R")
-source(WSE_Path)
+
+# Load source files
+src_dir <- paste0(dirname(rstudioapi::getSourceEditorContext()$path), "/src")
+r_files <- list.files(src_dir, pattern = "\\.R$", full.names = TRUE)  # フルパスを取得
+lapply(r_files, source)
 
 # Load data
 ds <- LoadData(DataPath = "/example/ExampleDS.txt")
